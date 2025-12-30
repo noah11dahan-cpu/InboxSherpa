@@ -7,8 +7,12 @@ sqlalchemy
 alembic
 psycopg[binary]
 httpx
-
+SQLAlchemy
+alembic
+asyncpg
 pytest
 pytest-asyncio
 ruff
 
+
+asyncpg>=0.29

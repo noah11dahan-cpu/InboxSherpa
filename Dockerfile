@@ -18,6 +18,8 @@ COPY app /app/app
 COPY workers /app/workers
 COPY tests /app/tests
 COPY pyproject.toml /app/pyproject.toml
+COPY alembic /app/alembic
+COPY alembic.ini /app/alembic.ini
 
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

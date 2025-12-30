@@ -1,12 +1,9 @@
+import asyncio
 
-import time
-
-def main() -> None:
-    # no-op worker for Day 1 (keeps container alive, proves orchestration)
+async def main() -> None:
     while True:
-        print("worker: alive")
-        time.sleep(10)
+        print("[worker] noop tick")
+        await asyncio.sleep(10)
 
 if __name__ == "__main__":
-    main()
-
+    asyncio.run(main())
