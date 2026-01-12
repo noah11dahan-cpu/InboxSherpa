@@ -2,7 +2,8 @@
 
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONPATH=/app \
+    PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_DEFAULT_TIMEOUT=120 \
@@ -10,7 +11,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY requirements.txt /app/requirements.txt
 
-# Upgrade tooling first, then install deps with retries/timeouts
 RUN python -m pip install --upgrade pip setuptools wheel \
  && pip install --no-cache-dir --prefer-binary -r requirements.txt
 
