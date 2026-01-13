@@ -1,18 +1,37 @@
-import os
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+# app/db/session.py
+from __future__ import annotations
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+import os
+import sys
+
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.pool import NullPool
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set")
 
-engine: AsyncEngine = create_async_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-)
+# IMPORTANT:
+# When pytest is running, disable pooling to prevent asyncpg loop-crossing errors.
+IS_PYTEST = "pytest" in sys.modules
+
+engine_kwargs: dict = {
+    "future": True,
+    "echo": False,
+}
+
+if IS_PYTEST:
+    engine_kwargs["poolclass"] = NullPool
+
+engine: AsyncEngine = create_async_engine(DATABASE_URL, **engine_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
-    bind=engine,
+    engine,
     class_=AsyncSession,
-    autoflush=False,
     expire_on_commit=False,
 )

@@ -2,15 +2,12 @@ fastapi
 uvicorn[standard]
 pydantic
 pydantic-settings
-
 sqlalchemy
 alembic
-
 asyncpg
 psycopg[binary]
-
 httpx
-
 pytest
 pytest-asyncio
 ruff
+scikit-learn
