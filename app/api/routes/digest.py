@@ -10,9 +10,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.deps import get_session
 from app.models import Cluster, Message
 from app.schemas.digest import DigestTodayOut, DigestClusterOut
+from app.schemas.summary import ClusterSummaryOut, Urgency
 from app.services.clustering import cluster_messages_v1
 
 router = APIRouter(prefix="/digest", tags=["digest"])
+
+
+def _fallback_summary(title: str, count: int) -> dict:
+    # Ensures schema always present even if old clusters exist without summary_json
+    return {
+        "cluster_title": title,
+        "summary_bullets": [f"{count} messages in this cluster."],
+        "urgency": Urgency.low.value,
+        "suggested_actions": [],
+        "confidence": 0.40,
+    }
 
 
 @router.get("/today", response_model=DigestTodayOut)
@@ -36,21 +48,30 @@ async def digest_today(
         select(
             Cluster.id,
             Cluster.title,
+            Cluster.summary_json,
             func.count(Message.id).label("message_count"),
         )
         .join(Message, Message.cluster_id == Cluster.id, isouter=True)
         .where(Cluster.user_id == user_id, Cluster.digest_date == digest_date)
-        .group_by(Cluster.id, Cluster.title)
+        .group_by(Cluster.id, Cluster.title, Cluster.summary_json)
         .order_by(func.count(Message.id).desc(), Cluster.title.asc())
     )
 
-    clusters = [
-        DigestClusterOut(
-            cluster_id=cid,
-            title=(title or "Other"),
-            message_count=int(cnt or 0),
+    clusters: list[DigestClusterOut] = []
+    for (cid, title, summary_json, cnt) in rows.all():
+        safe_title = (title or "Other")
+        count = int(cnt or 0)
+
+        data = summary_json or _fallback_summary(safe_title, count)
+        summary = ClusterSummaryOut.model_validate(data)
+
+        clusters.append(
+            DigestClusterOut(
+                cluster_id=cid,
+                title=safe_title,
+                message_count=count,
+                summary=summary,
+            )
         )
-        for (cid, title, cnt) in rows.all()
-    ]
 
     return DigestTodayOut(user_id=user_id, digest_date=digest_date, clusters=clusters)

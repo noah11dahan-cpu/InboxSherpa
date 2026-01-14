@@ -12,9 +12,9 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DB_URL")
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set")
+    raise RuntimeError("DATABASE_URL (or DB_URL) is not set")
 
 # IMPORTANT:
 # When pytest is running, disable pooling to prevent asyncpg loop-crossing errors.

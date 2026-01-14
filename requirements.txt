@@ -11,3 +11,4 @@ pytest
 pytest-asyncio
 ruff
 scikit-learn
+jsonschema

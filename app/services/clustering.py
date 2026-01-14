@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from app.services.summarizer import summarize_cluster
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
@@ -10,7 +10,7 @@ from typing import Any
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Cluster, Message
+from app.models import Cluster, Message, MessageStatus
 
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -117,7 +117,7 @@ async def cluster_messages_v1(
 
     stmt = select(Message).where(Message.user_id == user_id)
     if only_inbox:
-        stmt = stmt.where(Message.status == "inbox")  # enum stored as value in PG enum
+        stmt = stmt.where(Message.status == MessageStatus.inbox)
     stmt = stmt.order_by(Message.external_id.asc()).limit(limit)
 
     res = await session.execute(stmt)
@@ -215,13 +215,15 @@ async def cluster_messages_v1(
             terms = [w for w, _ in Counter(words).most_common(8)]
 
         title = _title_from_terms(terms)
+        cluster_msgs = [msgs[i] for i in idxs]
+        summary_obj = summarize_cluster(cluster_msgs, fallback_title=title)
 
         c = Cluster(
             user_id=user_id,
             digest_date=digest_date,
             algo_version="clustering_v1",
-            title=title,
-            summary_json=None,
+            title=summary_obj.cluster_title,
+            summary_json=summary_obj.model_dump(),
             created_at=now,
         )
         session.add(c)

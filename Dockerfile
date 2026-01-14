@@ -22,4 +22,7 @@ COPY alembic /app/alembic
 COPY alembic.ini /app/alembic.ini
 
 EXPOSE 8000
+COPY app/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
