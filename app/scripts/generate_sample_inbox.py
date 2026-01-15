@@ -179,14 +179,15 @@ def main() -> None:
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    now = datetime.now(timezone.utc)
+    now = datetime(2026, 1, 12, 12, 0, tzinfo=timezone.utc)
+
 
     messages: list[dict] = []
     for i in range(args.n):
         cat = random.choice(CATEGORIES)
 
         # spread over last 14 days
-        minutes_ago = random.randint(0, 14 * 24 * 60)
+        minutes_ago = random.randint(0, 2 * 24 * 60)  # keep it within last 48h of demo day
         ts = now - timedelta(minutes=minutes_ago)
 
         percent = random.choice([10, 15, 20, 25, 30, 40, 50])

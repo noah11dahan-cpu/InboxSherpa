@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from contextlib import asynccontextmanager
 from typing import Any
 
 from pydantic import ValidationError
@@ -85,6 +86,16 @@ async def _get_or_create_thread(
     return existing2
 
 
+@asynccontextmanager
+async def _maybe_begin(session: AsyncSession):
+    # If caller already started a transaction, don't start another one.
+    if session.in_transaction():
+        yield
+    else:
+        async with session.begin():
+            yield
+
+
 async def import_json_messages(session: AsyncSession, req: ImportRequest) -> ImportResult:
     raw_items = _load_messages_from_req(req)
 
@@ -93,8 +104,8 @@ async def import_json_messages(session: AsyncSession, req: ImportRequest) -> Imp
     deduped = 0
     errors = 0
 
-    # IMPORTANT: start the transaction FIRST
-    async with session.begin():
+    # IMPORTANT: be safe if caller already has an open transaction
+    async with _maybe_begin(session):
         user_exists = (await session.scalar(select(User.id).where(User.id == req.user_id))) is not None
         if not user_exists:
             raise ValueError(f"User not found for user_id={req.user_id}.")
