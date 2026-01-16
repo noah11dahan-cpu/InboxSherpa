@@ -27,3 +27,4 @@ dist/
 build/
 *.egg-info/
 '@ | Set-Content -Encoding utf8 .gitignore
+web/.env.local

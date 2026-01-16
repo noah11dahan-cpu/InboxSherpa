@@ -12,3 +12,4 @@ pytest-asyncio
 ruff
 scikit-learn
 jsonschema
+cryptography

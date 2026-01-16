@@ -203,3 +203,37 @@ class SuggestedAction(Base):
     __table_args__ = (
         Index("ix_suggested_actions_user_cluster", "user_id", "cluster_id"),
     )
+class GmailToken(Base):
+    __tablename__ = "gmail_tokens"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,  # 1 app user == 1 gmail account
+    )
+
+    # Encrypted at rest (see app/db/crypto.py)
+    access_token_enc: Mapped[str] = mapped_column(Text, nullable=False)
+    refresh_token_enc: Mapped[str] = mapped_column(Text, nullable=False)
+
+    # OAuth metadata
+    token_type: Mapped[str] = mapped_column(String(32), nullable=False, default="Bearer")
+    scope: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+
+    # When access token expires (UTC)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        Index("ix_gmail_tokens_user_id", "user_id"),
+    )

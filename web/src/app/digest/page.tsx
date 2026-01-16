@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { DigestTodayOut, getDigestToday } from "@/lib/api";
 
 function yyyyMmDdToday(): string {
@@ -26,14 +26,17 @@ export default function DigestPage() {
     if (saved) setUserId(saved);
   }, []);
 
-  const canRun = useMemo(() => userId.trim().length > 0 && digestDate.length === 10, [userId, digestDate]);
+  useEffect(() => {
+    if (userId) run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, digestDate]);
 
   async function run() {
+    if (!userId) return;
     setErr(null);
     setLoading(true);
     setData(null);
     try {
-      window.localStorage.setItem(LS_USER_ID, userId.trim());
       const out = await getDigestToday({ user_id: userId.trim(), digest_date: digestDate });
       setData(out);
     } catch (e: any) {
@@ -43,26 +46,30 @@ export default function DigestPage() {
     }
   }
 
+  if (!userId) {
+    return (
+      <main className="p-6 max-w-3xl mx-auto">
+        <h1 className="text-2xl font-semibold">Today’s Digest</h1>
+        <p className="text-gray-700 mt-2">
+          No connected Gmail account yet. Go back and click <b>Connect Gmail</b>.
+        </p>
+        <Link className="inline-block mt-4 border rounded-lg px-4 py-2" href="/">
+          Back to Connect
+        </Link>
+      </main>
+    );
+  }
+
   return (
     <main className="p-6 max-w-5xl mx-auto">
       <header className="mb-5">
         <h1 className="text-2xl font-semibold">Today’s Digest</h1>
         <p className="text-gray-600 mt-1">
-          Dev mode: enter the user UUID, choose a date, then generate the digest.
+          Showing only the connected user’s inbox.
         </p>
       </header>
 
       <div className="flex flex-col md:flex-row gap-3 items-end mb-6">
-        <label className="flex flex-col gap-1 w-full md:w-[420px]">
-          <span className="text-sm text-gray-700">User ID (UUID)</span>
-          <input
-            className="border rounded-lg px-3 py-2"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            placeholder="96cd6791-db08-4723-9b61-36377b9f6c9a"
-          />
-        </label>
-
         <label className="flex flex-col gap-1">
           <span className="text-sm text-gray-700">Date</span>
           <input
@@ -75,10 +82,10 @@ export default function DigestPage() {
 
         <button
           className="border rounded-lg px-4 py-2 font-medium disabled:opacity-50"
-          disabled={!canRun || loading}
+          disabled={loading}
           onClick={run}
         >
-          {loading ? "Generating…" : "Generate"}
+          {loading ? "Refreshing…" : "Refresh"}
         </button>
       </div>
 
@@ -90,11 +97,17 @@ export default function DigestPage() {
 
       {!data && !err && (
         <div className="text-gray-600">
-          Enter a user ID and click Generate.
+          {loading ? "Loading…" : "No data yet."}
         </div>
       )}
 
-      {data && (
+      {data && data.clusters.length === 0 && (
+        <div className="text-gray-700">
+          No clusters yet. Your worker will import Gmail INBOX and clustering will appear shortly.
+        </div>
+      )}
+
+      {data && data.clusters.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {data.clusters.map((c) => (
             <Link
