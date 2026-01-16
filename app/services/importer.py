@@ -113,8 +113,9 @@ async def import_json_messages(session: AsyncSession, req: ImportRequest) -> Imp
         for raw in raw_items:
             try:
                 m = NormalizedJsonMessage.model_validate(raw)
-            except ValidationError:
+            except ValidationError as e:
                 errors += 1
+                print(f"[import] validation error raw={raw} error={e}")
                 continue
 
             thread_id = None

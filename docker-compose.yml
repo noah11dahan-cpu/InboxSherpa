@@ -34,7 +34,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: ["python", "-m", "workers.noop_worker"]
+    command: ["python", "-m", "workers.gmail_sync_worker"]
     restart: unless-stopped
 
 volumes:
