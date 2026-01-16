@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { DigestTodayOut, getDigestToday } from "@/lib/api";
 
 function yyyyMmDdToday(): string {
@@ -15,21 +16,32 @@ function yyyyMmDdToday(): string {
 const LS_USER_ID = "inboxsherpa_user_id";
 
 export default function DigestPage() {
+  const sp = useSearchParams();
+
   const [userId, setUserId] = useState<string>("");
   const [digestDate, setDigestDate] = useState<string>(yyyyMmDdToday());
   const [data, setData] = useState<DigestTodayOut | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Load user_id from localStorage
   useEffect(() => {
     const saved = window.localStorage.getItem(LS_USER_ID);
     if (saved) setUserId(saved);
   }, []);
 
+  // On first mount: if URL has ?digest_date=YYYY-MM-DD, use it
+  useEffect(() => {
+    const qd = sp.get("digest_date");
+    if (qd) setDigestDate(qd);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-load when userId becomes available (but NOT on every date change)
   useEffect(() => {
     if (userId) run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, digestDate]);
+  }, [userId]);
 
   async function run() {
     if (!userId) return;
@@ -37,7 +49,10 @@ export default function DigestPage() {
     setLoading(true);
     setData(null);
     try {
-      const out = await getDigestToday({ user_id: userId.trim(), digest_date: digestDate });
+      const out = await getDigestToday({
+        user_id: userId.trim(),
+        digest_date: digestDate,
+      });
       setData(out);
     } catch (e: any) {
       setErr(e?.message ?? String(e));
@@ -49,7 +64,7 @@ export default function DigestPage() {
   if (!userId) {
     return (
       <main className="p-6 max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold">Today’s Digest</h1>
+        <h1 className="text-2xl font-semibold">Digest</h1>
         <p className="text-gray-700 mt-2">
           No connected Gmail account yet. Go back and click <b>Connect Gmail</b>.
         </p>
@@ -63,9 +78,9 @@ export default function DigestPage() {
   return (
     <main className="p-6 max-w-5xl mx-auto">
       <header className="mb-5">
-        <h1 className="text-2xl font-semibold">Today’s Digest</h1>
+        <h1 className="text-2xl font-semibold">Digest</h1>
         <p className="text-gray-600 mt-1">
-          Showing only the connected user’s inbox.
+          Date selected: <span className="font-medium">{digestDate}</span>
         </p>
       </header>
 
@@ -89,21 +104,14 @@ export default function DigestPage() {
         </button>
       </div>
 
-      {err && (
-        <div className="border rounded-lg p-3 bg-red-50 text-red-800 mb-6">
-          {err}
-        </div>
-      )}
+      {err && <div className="border rounded-lg p-3 bg-red-50 text-red-800 mb-6">{err}</div>}
 
-      {!data && !err && (
-        <div className="text-gray-600">
-          {loading ? "Loading…" : "No data yet."}
-        </div>
-      )}
+      {!data && !err && <div className="text-gray-600">{loading ? "Loading…" : "No data yet."}</div>}
 
       {data && data.clusters.length === 0 && (
         <div className="text-gray-700">
-          No clusters yet. Your worker will import Gmail INBOX and clustering will appear shortly.
+          No clusters for this date yet. If you expected results, click Refresh (or ensure the worker has imported
+          messages for that day).
         </div>
       )}
 
@@ -112,9 +120,9 @@ export default function DigestPage() {
           {data.clusters.map((c) => (
             <Link
               key={c.cluster_id}
-              href={`/cluster/${c.cluster_id}?user_id=${encodeURIComponent(data.user_id)}&digest_date=${encodeURIComponent(
-                data.digest_date
-              )}`}
+              href={`/cluster/${c.cluster_id}?user_id=${encodeURIComponent(
+                data.user_id
+              )}&digest_date=${encodeURIComponent(digestDate)}`}
               className="border rounded-2xl p-4 hover:shadow-sm bg-white"
             >
               <div className="flex items-start justify-between gap-3">
@@ -122,9 +130,7 @@ export default function DigestPage() {
                   <div className="text-lg font-semibold">{c.summary.cluster_title || c.title}</div>
                   <div className="text-sm text-gray-600 mt-1">{c.message_count} messages</div>
                 </div>
-                <div className="text-xs border rounded-full px-2 py-1">
-                  {c.summary.urgency}
-                </div>
+                <div className="text-xs border rounded-full px-2 py-1">{c.summary.urgency}</div>
               </div>
 
               <ul className="mt-3 list-disc pl-5 text-sm text-gray-800">
@@ -146,9 +152,7 @@ export default function DigestPage() {
                 </div>
               )}
 
-              <div className="mt-3 text-xs text-gray-500">
-                Confidence: {Math.round(c.summary.confidence * 100)}%
-              </div>
+              <div className="mt-3 text-xs text-gray-500">Confidence: {Math.round(c.summary.confidence * 100)}%</div>
             </Link>
           ))}
         </div>
