@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ClusterDetailOut, getClusterDetail } from "@/lib/api";
+import {
+  ClusterDetailOut,
+  getClusterDetail,
+  applySuggestedAction,
+} from "@/lib/api";
+
+type ViewFilter = "inbox" | "all";
 
 export default function ClusterPage() {
   const params = useParams<{ clusterId: string }>();
@@ -24,30 +30,64 @@ export default function ClusterPage() {
   const [data, setData] = useState<ClusterDetailOut | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [view, setView] = useState<ViewFilter>("inbox");
+
+  async function load() {
+    setErr(null);
+    setLoading(true);
+    try {
+      if (!clusterId) throw new Error("Missing clusterId in route.");
+      if (!user_id || !digest_date)
+        throw new Error("Missing user_id or digest_date in URL query params.");
+
+      const out = await getClusterDetail({
+        cluster_id: clusterId,
+        user_id,
+        digest_date,
+      });
+      setData(out);
+    } catch (e: any) {
+      setErr(e?.message ?? String(e));
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function run() {
-      setErr(null);
-      setLoading(true);
-      try {
-        if (!clusterId) throw new Error("Missing clusterId in route.");
-        if (!user_id || !digest_date) throw new Error("Missing user_id or digest_date in URL query params.");
-
-        const out = await getClusterDetail({
-          cluster_id: clusterId,
-          user_id,
-          digest_date,
-        });
-        setData(out);
-      } catch (e: any) {
-        setErr(e?.message ?? String(e));
-        setData(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    run();
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clusterId, user_id, digest_date]);
+
+  async function onDecision(params: {
+    suggested_action_id: string | undefined;
+    decision: "accept" | "reject";
+  }) {
+    if (!params.suggested_action_id) return;
+    if (!user_id) return;
+
+    setErr(null);
+    setActionBusy(true);
+    try {
+      await applySuggestedAction({
+        user_id,
+        suggested_action_id: params.suggested_action_id,
+        decision: params.decision,
+      });
+      await load(); // refresh cluster detail after applying
+    } catch (e: any) {
+      setErr(e?.message ?? String(e));
+    } finally {
+      setActionBusy(false);
+    }
+  }
+
+  const visibleMessages = useMemo(() => {
+    if (!data) return [];
+    if (view === "all") return data.messages;
+    return data.messages.filter((m) => (m.status || "").toLowerCase() === "inbox");
+  }, [data, view]);
 
   return (
     <main className="p-6 max-w-5xl mx-auto">
@@ -87,11 +127,61 @@ export default function ClusterPage() {
               <div className="mt-4">
                 <div className="text-sm font-medium">Suggested actions</div>
                 <ul className="mt-2 space-y-2">
-                  {data.summary.suggested_actions.map((a, i) => (
-                    <li key={i} className="text-sm text-gray-700">
-                      <span className="font-medium">{a.action_type}</span>: {a.reason}
-                    </li>
-                  ))}
+                  {data.summary.suggested_actions.map((a, i) => {
+                    const status = (a as any).status ?? "proposed";
+                    const actionId = (a as any).id as string | undefined;
+                    const isDecided = status !== "proposed";
+
+                    return (
+                      <li
+                        key={actionId ?? i}
+                        className="text-sm text-gray-700 border rounded-xl p-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div>
+                              <span className="font-medium">{a.action_type}</span>:{" "}
+                              {a.reason}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              Status:{" "}
+                              <span className="font-medium">{status}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button
+                              className="border rounded-lg px-3 py-1 text-sm disabled:opacity-50"
+                              disabled={actionBusy || isDecided || !actionId}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                void onDecision({
+                                  suggested_action_id: actionId,
+                                  decision: "accept",
+                                });
+                              }}
+                            >
+                              Accept
+                            </button>
+
+                            <button
+                              className="border rounded-lg px-3 py-1 text-sm disabled:opacity-50"
+                              disabled={actionBusy || isDecided || !actionId}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                void onDecision({
+                                  suggested_action_id: actionId,
+                                  decision: "reject",
+                                });
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -102,8 +192,38 @@ export default function ClusterPage() {
           </section>
 
           <section className="space-y-3">
-            <div className="text-sm font-medium">Messages</div>
-            {data.messages.map((m) => (
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-medium">Messages</div>
+
+              <div className="flex gap-2">
+                <button
+                  className={`border rounded-lg px-3 py-1 text-sm ${
+                    view === "inbox" ? "font-medium" : ""
+                  }`}
+                  onClick={() => setView("inbox")}
+                >
+                  Inbox only
+                </button>
+                <button
+                  className={`border rounded-lg px-3 py-1 text-sm ${
+                    view === "all" ? "font-medium" : ""
+                  }`}
+                  onClick={() => setView("all")}
+                >
+                  All
+                </button>
+              </div>
+            </div>
+
+            {visibleMessages.length === 0 && (
+              <div className="text-sm text-gray-600">
+                {view === "inbox"
+                  ? "No inbox messages left in this cluster."
+                  : "No messages in this cluster."}
+              </div>
+            )}
+
+            {visibleMessages.map((m) => (
               <div key={m.id} className="border rounded-xl p-3 bg-white">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -114,7 +234,9 @@ export default function ClusterPage() {
                     {new Date(m.timestamp).toLocaleString()}
                   </div>
                 </div>
-                {m.snippet && <div className="text-sm text-gray-700 mt-2">{m.snippet}</div>}
+                {m.snippet && (
+                  <div className="text-sm text-gray-700 mt-2">{m.snippet}</div>
+                )}
                 <div className="text-xs text-gray-500 mt-2">
                   {m.channel} • {m.status} • external_id: {m.external_id}
                 </div>

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import uuid
 from collections import Counter
 from typing import List
 
@@ -66,32 +67,50 @@ def _compute_urgency(msgs: List[Message]) -> Urgency:
 
 
 def _suggest_actions(title: str, urgency: Urgency) -> List[SuggestedActionOut]:
+    """
+    IMPORTANT:
+    Pydantic requires SuggestedActionOut.id (your logs show 500s when it's missing).
+    So we generate a UUID for each suggested action created by the summarizer.
+    """
     t = title.lower()
     actions: List[SuggestedActionOut] = []
 
     if any(w in t for w in ["promo", "sale", "deal", "newsletter", "marketing", "unsubscribe"]):
         actions.append(
             SuggestedActionOut(
+                id=str(uuid.uuid4()),
                 action_type=ActionType.archive_all,
                 reason="Looks like promotional content; archive after a quick scan.",
+                payload=None,
+                urgency=urgency,
+                confidence=0.70 if urgency == Urgency.low else 0.60,
+                status="proposed",
             )
         )
 
     if urgency in (Urgency.medium, Urgency.high):
         actions.append(
             SuggestedActionOut(
+                id=str(uuid.uuid4()),
                 action_type=ActionType.snooze,
                 reason="Contains deadline/payment/security language; snooze if you can’t act now.",
                 payload={"snooze_for_hours": 24},
+                urgency=urgency,
+                confidence=0.75,
+                status="proposed",
             )
         )
 
     # Gmail-ready labeling primitive
     actions.append(
         SuggestedActionOut(
+            id=str(uuid.uuid4()),
             action_type=ActionType.label_add,
             reason="Apply a topic label to keep this cluster organized.",
             payload={"label_name": title[:40]},
+            urgency=urgency,
+            confidence=0.55,
+            status="proposed",
         )
     )
 

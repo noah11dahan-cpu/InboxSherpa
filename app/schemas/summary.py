@@ -20,11 +20,21 @@ class ActionType(str, Enum):
     label_add = "label_add"
     label_remove = "label_remove"
 
+class SuggestionStatus(str, Enum):
+    proposed = "proposed"
+    accepted = "accepted"
+    rejected = "rejected"
 
 class SuggestedActionOut(BaseModel):
+    id: str
     action_type: ActionType
     reason: str = Field(..., min_length=3, max_length=240)
-    payload: Optional[Dict[str, Any]] = None
+    payload: dict | None = None
+    urgency: Urgency | None = None
+    confidence: float | None = None
+    status: SuggestionStatus = SuggestionStatus.proposed
+
+
 
 
 class ClusterSummaryOut(BaseModel):

@@ -13,24 +13,25 @@ from app.api.routes.auth_google import router as auth_google_router
 
 
 def _cors_allow_origins() -> list[str]:
-    raw = os.getenv("CORS_ALLOW_ORIGINS", "")
-    origins = [o.strip() for o in raw.split(",") if o.strip()]
-    return origins
+    raw = os.getenv("CORS_ALLOW_ORIGINS", "").strip()
+    if not raw:
+        # ✅ dev default so localhost:3000 can always call the API
+        return ["http://localhost:3000", "http://127.0.0.1:3000"]
+    return [o.strip() for o in raw.split(",") if o.strip()]
 
 
 app = FastAPI(title="InboxSherpa API")
 
-# CORS: configured by env var only (no hardcoding)
 origins = _cors_allow_origins()
-if origins:
-    allow_all = "*" in origins
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"] if allow_all else origins,
-        allow_credentials=not allow_all,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+allow_all = "*" in origins
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"] if allow_all else origins,
+    allow_credentials=not allow_all,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
@@ -43,5 +44,3 @@ app.include_router(digest_router)
 app.include_router(clusters_router)
 app.include_router(actions_router)
 app.include_router(auth_google_router)
-
-

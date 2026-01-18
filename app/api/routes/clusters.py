@@ -2,20 +2,21 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timezone
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.deps import get_session
-from app.models import Cluster, Message
+from app.models import Cluster, Message, SuggestedAction
 from app.schemas.cluster_detail import ClusterDetailOut, ClusterMessageOut
 from app.schemas.summary import ClusterSummaryOut, Urgency
 
 router = APIRouter(prefix="/clusters", tags=["clusters"])
 
 
-def _fallback_summary(title: str, count: int) -> dict:
+def _fallback_summary(title: str, count: int) -> dict[str, Any]:
     return {
         "cluster_title": title,
         "summary_bullets": [f"{count} messages in this cluster."],
@@ -23,6 +24,52 @@ def _fallback_summary(title: str, count: int) -> dict:
         "suggested_actions": [],
         "confidence": 0.40,
     }
+
+
+def _safe_enum_value(v: Any) -> str:
+    return v.value if hasattr(v, "value") else str(v)
+
+
+def _pick_reason(sa: SuggestedAction) -> str:
+    """
+    Your SuggestedAction model does not have .reason (per traceback),
+    so we try common alternatives and then fall back.
+    """
+    for attr in ("reason", "rationale", "description", "explanation"):
+        v = getattr(sa, attr, None)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return "Rule-based suggestion"
+
+
+def _serialize_suggested_action(sa: SuggestedAction) -> dict[str, Any] | None:
+    """
+    Never raise. If a row is missing required fields, skip it (return None).
+    """
+    try:
+        sa_id = getattr(sa, "id", None)
+        sa_type = getattr(sa, "action_type", None)
+        if sa_id is None or sa_type is None:
+            return None
+
+        payload = getattr(sa, "payload", None)
+        status = getattr(sa, "status", None)
+
+        # Optional fields (only if your model actually has them)
+        urgency = getattr(sa, "urgency", None)
+        confidence = getattr(sa, "confidence", None)
+
+        return {
+            "id": str(sa_id),
+            "action_type": _safe_enum_value(sa_type),
+            "reason": _pick_reason(sa),
+            "payload": payload,
+            "urgency": _safe_enum_value(urgency) if urgency is not None else None,
+            "confidence": float(confidence) if confidence is not None else None,
+            "status": _safe_enum_value(status) if status is not None else "proposed",
+        }
+    except Exception:
+        return None
 
 
 @router.get("/{cluster_id}", response_model=ClusterDetailOut)
@@ -48,11 +95,31 @@ async def cluster_detail(
 
     # count messages in cluster
     count = await session.scalar(
-        select(func.count(Message.id)).where(Message.user_id == user_id, Message.cluster_id == cluster_id)
+        select(func.count(Message.id)).where(
+            Message.user_id == user_id,
+            Message.cluster_id == cluster_id,
+        )
     )
     message_count = int(count or 0)
 
-    summary_data = cluster.summary_json or _fallback_summary(cluster.title or "Other", message_count)
+    # Base summary from Cluster.summary_json, but we will override suggested_actions from DB
+    base = cluster.summary_json if isinstance(cluster.summary_json, dict) else {}
+    fb = _fallback_summary(cluster.title or "Other", message_count)
+    summary_data: dict[str, Any] = {**fb, **base}
+
+    # Pull SuggestedAction rows from DB so we have real ids + status
+    sa_rows = await session.execute(
+        select(SuggestedAction).where(
+            SuggestedAction.user_id == user_id,
+            SuggestedAction.cluster_id == cluster_id,
+        )
+    )
+    suggested_actions = list(sa_rows.scalars().all())
+
+    serialized = [_serialize_suggested_action(sa) for sa in suggested_actions]
+    summary_data["suggested_actions"] = [x for x in serialized if x is not None]
+
+    # Validate into response schema
     summary = ClusterSummaryOut.model_validate(summary_data)
 
     rows = await session.execute(
@@ -72,8 +139,8 @@ async def cluster_detail(
         summary=summary,
         messages=[
             ClusterMessageOut(
-                id=m.id,
-                external_id=m.external_id,
+                id=str(m.id),
+                external_id=str(m.external_id),
                 sender=m.sender,
                 subject=m.subject,
                 snippet=m.snippet,

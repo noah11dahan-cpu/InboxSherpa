@@ -13,16 +13,16 @@ from app.schemas.digest import DigestTodayOut, DigestClusterOut
 from app.schemas.summary import ClusterSummaryOut, Urgency
 from app.services.clustering import cluster_messages_v1
 
-# Day 8
 from app.services.action_rules import propose_actions
 from app.services.suggested_actions import upsert_suggested_action, list_suggested_actions
 
+# ✅ NEW: sync a specific day from Gmail before clustering
+from app.services.gmail_sync import sync_gmail_day
 
 router = APIRouter(prefix="/digest", tags=["digest"])
 
 
 def _fallback_summary(title: str, count: int) -> dict:
-    # Ensures schema always present even if old clusters exist without summary_json
     return {
         "cluster_title": title,
         "summary_bullets": [f"{count} messages in this cluster."],
@@ -32,22 +32,67 @@ def _fallback_summary(title: str, count: int) -> dict:
     }
 
 
+def _merge_summary(safe_title: str, count: int, summary_json: dict | None) -> dict:
+    data = _fallback_summary(safe_title, count)
+
+    if isinstance(summary_json, dict) and summary_json:
+        data.update(summary_json)
+
+    bullets = data.get("summary_bullets")
+    if not isinstance(bullets, list) or len(bullets) == 0:
+        data["summary_bullets"] = [f"{count} messages in this cluster."]
+
+    urg = data.get("urgency")
+    if urg not in {u.value for u in Urgency}:
+        data["urgency"] = Urgency.low.value
+
+    conf = data.get("confidence")
+    try:
+        conf_f = float(conf)
+    except Exception:
+        conf_f = 0.40
+    if conf_f < 0.0:
+        conf_f = 0.0
+    if conf_f > 1.0:
+        conf_f = 1.0
+    data["confidence"] = conf_f
+
+    ct = data.get("cluster_title")
+    if not isinstance(ct, str) or not ct.strip():
+        data["cluster_title"] = safe_title
+
+    return data
+
+
 @router.get("/today", response_model=DigestTodayOut)
 async def digest_today(
     user_id: uuid.UUID = Query(..., description="Dev-only: pass the user UUID"),
     digest_date: date | None = Query(None, description="Defaults to UTC today"),
     auto_cluster_if_missing: bool = Query(True, description="If no clusters for the day, run clustering"),
+    # ✅ NEW: if missing, sync that day from Gmail first
+    auto_sync_if_missing: bool = Query(True, description="If no clusters for the day, sync Gmail for that day first"),
     session: AsyncSession = Depends(get_session),
 ) -> DigestTodayOut:
     if digest_date is None:
         digest_date = datetime.now(timezone.utc).date()
 
-    # If nothing exists for that day, optionally run clustering
     existing_count = await session.scalar(
         select(func.count(Cluster.id)).where(Cluster.user_id == user_id, Cluster.digest_date == digest_date)
     )
+
     if (existing_count or 0) == 0 and auto_cluster_if_missing:
-        await cluster_messages_v1(session=session, user_id=user_id, digest_date=digest_date)
+        # ✅ Option B: make sure messages for that specific day exist in DB
+        if auto_sync_if_missing:
+            # This is safe: it dedupes on insert by unique constraint.
+            await sync_gmail_day(session, user_id=user_id, digest_date=digest_date, tz_name="America/Montreal", max_messages=500)
+
+        await cluster_messages_v1(
+            session=session,
+            user_id=user_id,
+            digest_date=digest_date,
+            only_inbox=False,
+            rebuild_for_day=True,
+        )
 
     rows = await session.execute(
         select(
@@ -69,10 +114,8 @@ async def digest_today(
         safe_title = (title or "Other")
         count = int(cnt or 0)
 
-        # base summary (from DB if exists, else fallback)
-        data = summary_json or _fallback_summary(safe_title, count)
+        data = _merge_summary(safe_title, count, summary_json)
 
-        # Day 8: propose + persist suggested actions (rule-based)
         msg_rows = await session.execute(
             select(Message.subject, Message.body_text).where(Message.cluster_id == cid, Message.user_id == user_id)
         )
@@ -82,7 +125,6 @@ async def digest_today(
 
         proposed = propose_actions(cluster_title=safe_title, message_subjects=subjects, message_bodies=bodies)
 
-        # For Day 9 Gmail apply: include thread_ids in payload when available
         thread_rows = await session.execute(
             select(Message.thread_external_id).where(Message.cluster_id == cid, Message.user_id == user_id)
         )
@@ -106,8 +148,6 @@ async def digest_today(
 
         actions = await list_suggested_actions(session, user_id=user_id, cluster_id=cid)
 
-        # Inject into the summary returned by API
-        # NOTE: ClusterSummaryOut requires suggested_actions[*].reason
         data["suggested_actions"] = [
             {
                 "id": str(a.id),
@@ -116,7 +156,7 @@ async def digest_today(
                 "urgency": a.urgency.value,
                 "confidence": a.confidence,
                 "status": a.status.value,
-                "reason": getattr(a, "reason", None) or "Rule-based suggestion",
+                "reason": "Rule-based suggestion",
             }
             for a in actions
         ]

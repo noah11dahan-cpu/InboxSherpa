@@ -7,10 +7,17 @@ export type ActionType =
   | "label_add"
   | "label_remove";
 
+export type SuggestionStatus = "proposed" | "accepted" | "rejected";
+
 export type SuggestedActionOut = {
+  id: string;
   action_type: ActionType;
   reason: string;
   payload?: Record<string, unknown> | null;
+
+  urgency?: Urgency;
+  confidence?: number | null;
+  status?: SuggestionStatus;
 };
 
 export type ClusterSummaryOut = {
@@ -67,10 +74,26 @@ function apiBaseUrl(): string {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const url = `${apiBaseUrl()}${path}`;
-  const r = await fetch(url, { cache: "no-store" });
+  const r = await fetch(url, { cache: "no-store", mode: "cors" });
   if (!r.ok) {
-    const text = await r.text();
-    throw new Error(`API ${r.status}: ${text}`);
+    const text = await r.text().catch(() => "");
+    throw new Error(`API ${r.status}: ${text || r.statusText}`);
+  }
+  return (await r.json()) as T;
+}
+
+async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const url = `${apiBaseUrl()}${path}`;
+  const r = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+    mode: "cors",
+  });
+  if (!r.ok) {
+    const text = await r.text().catch(() => "");
+    throw new Error(`API ${r.status}: ${text || r.statusText}`);
   }
   return (await r.json()) as T;
 }
@@ -100,4 +123,20 @@ export function getClusterDetail(params: {
     limit: String(params.limit ?? 200),
   });
   return fetchJson(`/clusters/${params.cluster_id}?${q.toString()}`);
+}
+
+export function applySuggestedAction(params: {
+  user_id: string;
+  suggested_action_id: string;
+  decision: "accept" | "reject";
+}): Promise<{
+  ok: boolean;
+  suggested_action_id: string;
+  decision: "accept" | "reject";
+  previous_status: string;
+  new_status: string;
+  messages_updated: number;
+  message_status_set_to: string | null;
+}> {
+  return postJson(`/actions/apply`, params);
 }

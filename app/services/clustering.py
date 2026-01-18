@@ -1,13 +1,14 @@
 from __future__ import annotations
 from app.services.summarizer import summarize_cluster
+
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, timedelta
 from math import sqrt
 from typing import Any
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Cluster, Message, MessageStatus
@@ -18,8 +19,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 _HTML_RE = re.compile(r"<[^>]+>")
 _WS_RE = re.compile(r"\s+")
 
-
-# Deterministic label buckets (helps produce human-ish titles like "Promos / School / Bills")
 _BUCKETS: dict[str, list[str]] = {
     "Promos": ["unsubscribe", "sale", "deal", "promo", "discount", "offer", "coupon", "newsletter", "marketing"],
     "School": ["assignment", "exam", "quiz", "course", "class", "deadline", "prof", "grades", "moodle", "canvas"],
@@ -32,7 +31,7 @@ _BUCKETS: dict[str, list[str]] = {
 def _clean_text(s: str | None) -> str:
     if not s:
         return ""
-    s = _HTML_RE.sub(" ", s)  # Gmail HTML bodies later
+    s = _HTML_RE.sub(" ", s)
     s = s.lower()
     s = _WS_RE.sub(" ", s).strip()
     return s
@@ -47,11 +46,6 @@ def _guess_bucket(text: str) -> str | None:
 
 
 def _choose_k(n: int) -> int:
-    """
-    Deterministic + conservative:
-    - small n => 1–3 clusters
-    - larger n => ~sqrt(n), capped
-    """
     if n <= 6:
         return 2 if n >= 4 else 1
     k = int(round(sqrt(n)))
@@ -63,7 +57,6 @@ def _title_from_terms(terms: list[str]) -> str:
     b = _guess_bucket(joined)
     if b:
         return b
-    # fallback: use the first 1–2 terms
     terms = [t for t in terms if t]
     if not terms:
         return "Other"
@@ -85,20 +78,21 @@ async def cluster_messages_v1(
     only_inbox: bool = True,
     limit: int = 5000,
     rebuild_for_day: bool = True,
+    digest_tz: str = "America/Montreal",
 ) -> list[Cluster]:
     """
     Day 4 clustering:
     - Creates Cluster rows for (user_id, digest_date)
     - Assigns Message.cluster_id
-    - Deterministic:
-        - stable message ordering
-        - fixed KMeans random_state
-        - fixed vectorizer config
+
+    ✅ ROBUST FIX:
+    Interpret digest_date as a *calendar day in digest_tz* using Postgres timezone().
+    This avoids any UTC boundary math issues in Python.
     """
     if digest_date is None:
+        # interpret "today" as UTC date fallback; digest endpoint should normally pass digest_date
         digest_date = datetime.now(timezone.utc).date()
 
-    # If rebuilding, delete existing clusters for that day and clear their message assignments
     if rebuild_for_day:
         existing_cluster_ids = await session.scalars(
             select(Cluster.id).where(Cluster.user_id == user_id, Cluster.digest_date == digest_date)
@@ -115,7 +109,16 @@ async def cluster_messages_v1(
             )
             await session.flush()
 
-    stmt = select(Message).where(Message.user_id == user_id)
+    # ✅ Key line: local date in digest_tz equals digest_date
+    local_day_expr = func.date(func.timezone(digest_tz, Message.timestamp))
+
+    stmt = (
+        select(Message)
+        .where(
+            Message.user_id == user_id,
+            local_day_expr == digest_date,
+        )
+    )
     if only_inbox:
         stmt = stmt.where(Message.status == MessageStatus.inbox)
     stmt = stmt.order_by(Message.external_id.asc()).limit(limit)
@@ -128,21 +131,19 @@ async def cluster_messages_v1(
 
     docs: list[str] = []
     for m in msgs:
-        # Use snippet/body_text as main content; include sender/subject for better topic separation
         doc = " ".join(
             [
                 _clean_text(m.subject),
                 _clean_text(m.sender),
                 _clean_text(m.snippet),
                 _clean_text(m.body_text)[:3000],
-                _clean_text(m.body_html)[:1000],  # tiny hint even if HTML
+                _clean_text(m.body_html)[:1000],
             ]
         ).strip()
         docs.append(doc)
 
     n = len(docs)
 
-    # Very small datasets: deterministic keyword bucketing (no pointless KMeans)
     if n < 8:
         label_map: dict[str, int] = {}
         labels: list[int] = []
@@ -153,9 +154,7 @@ async def cluster_messages_v1(
                 label_map[b] = next_id
                 next_id += 1
             labels.append(label_map[b])
-        top_terms_by_label: dict[int, list[str]] = {
-            lbl: [name.lower()] for name, lbl in label_map.items()
-        }
+        top_terms_by_label: dict[int, list[str]] = {lbl: [name.lower()] for name, lbl in label_map.items()}
         k = len(label_map)
     else:
         k = _choose_k(n)
@@ -179,10 +178,8 @@ async def cluster_messages_v1(
 
         top_terms_by_label: dict[int, list[str]] = {}
         for c in range(k):
-            # Top centroid features
             top_idx = centers[c].argsort()[::-1][:10]
             terms = [str(feature_names[i]) for i in top_idx if i < len(feature_names)]
-            # de-dup but keep order
             seen: set[str] = set()
             uniq: list[str] = []
             for t in terms:
@@ -198,7 +195,6 @@ async def cluster_messages_v1(
     created: list[Cluster] = []
     now = datetime.now(timezone.utc)
 
-    # stable cluster order: by size (desc), then label id
     ordered_labels = sorted(
         label_to_indices.keys(),
         key=lambda lbl: (-len(label_to_indices[lbl]), lbl),
@@ -208,7 +204,6 @@ async def cluster_messages_v1(
         idxs = label_to_indices[lbl]
         terms = top_terms_by_label.get(lbl, [])
         if not terms:
-            # fallback: most common words across docs in this cluster
             words: list[str] = []
             for i in idxs:
                 words.extend([w for w in docs[i].split() if len(w) >= 4])
@@ -227,9 +222,8 @@ async def cluster_messages_v1(
             created_at=now,
         )
         session.add(c)
-        await session.flush()  # get c.id
+        await session.flush()
 
-        # Assign messages to this cluster
         msg_ids = [msgs[i].id for i in idxs]
         await session.execute(
             update(Message).where(Message.id.in_(msg_ids)).values(cluster_id=c.id)

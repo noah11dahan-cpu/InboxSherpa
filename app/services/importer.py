@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from contextlib import asynccontextmanager
+from datetime import timezone
 from typing import Any
 
 from pydantic import ValidationError
@@ -19,14 +20,9 @@ def _load_messages_from_req(req: ImportRequest) -> list[dict[str, Any]]:
 
     if req.file_path and req.allow_file_path:
         path = req.file_path
-
-        # Normalize Windows backslashes to be safe
         path = path.replace("\\", "/")
 
-        # If caller sends relative path, resolve relative to current working directory
-        # (works locally). In Docker, /app is WORKDIR so "data/..." also works.
         if not path.startswith("/"):
-            # Keep as relative; open() will resolve from cwd
             pass
 
         with open(path, "r", encoding="utf-8") as f:
@@ -88,12 +84,18 @@ async def _get_or_create_thread(
 
 @asynccontextmanager
 async def _maybe_begin(session: AsyncSession):
-    # If caller already started a transaction, don't start another one.
     if session.in_transaction():
         yield
     else:
         async with session.begin():
             yield
+
+
+def _ensure_utc(dt):
+    # Normalize to aware UTC for consistent day bucketing
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
 
 async def import_json_messages(session: AsyncSession, req: ImportRequest) -> ImportResult:
@@ -104,7 +106,6 @@ async def import_json_messages(session: AsyncSession, req: ImportRequest) -> Imp
     deduped = 0
     errors = 0
 
-    # IMPORTANT: be safe if caller already has an open transaction
     async with _maybe_begin(session):
         user_exists = (await session.scalar(select(User.id).where(User.id == req.user_id))) is not None
         if not user_exists:
@@ -128,6 +129,8 @@ async def import_json_messages(session: AsyncSession, req: ImportRequest) -> Imp
                 )
                 thread_id = t.id
 
+            ts = _ensure_utc(m.timestamp)
+
             msg = Message(
                 user_id=req.user_id,
                 thread_id=thread_id,
@@ -135,7 +138,7 @@ async def import_json_messages(session: AsyncSession, req: ImportRequest) -> Imp
                 channel=Channel.json,
                 external_id=m.external_id,
                 thread_external_id=m.thread_external_id,
-                timestamp=m.timestamp,
+                timestamp=ts,
                 sender=m.sender,
                 subject=m.subject,
                 snippet=m.snippet,
