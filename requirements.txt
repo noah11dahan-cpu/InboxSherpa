@@ -13,3 +13,4 @@ ruff
 scikit-learn
 jsonschema
 cryptography
+pyyaml

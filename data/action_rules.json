@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "promos_archive",
+      "enabled": true,
+      "match": {
+        "any_cluster_keywords": ["promo", "promotion", "deal", "sale", "discount", "coupon", "marketing", "newsletter"]
+      },
+      "propose": {
+        "action_type": "label_remove",
+        "urgency": "low",
+        "confidence": 0.75,
+        "payload": {
+          "remove_label_ids": ["INBOX"],
+          "add_label_ids": []
+        }
+      }
+    },
+    {
+      "id": "deadline_star",
+      "enabled": true,
+      "match": {
+        "any_message_keywords": ["due", "deadline", "expires", "action required", "payment due", "today", "tomorrow"]
+      },
+      "propose": {
+        "action_type": "label_add",
+        "urgency": "high",
+        "confidence": 0.85,
+        "payload": {
+          "add_label_ids": ["STARRED"],
+          "remove_label_ids": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+version: 1
+
+rules:
+  - id: promos_archive_from_inbox
+    enabled: true
+    match:
+      any_cluster_keywords: ["promo", "promotion", "deal", "sale", "discount", "coupon", "newsletter", "marketing"]
+      any_message_keywords: ["sale", "discount", "coupon", "deal", "promo", "promotion"]
+    propose:
+      action_type: "label_remove"
+      urgency: "low"
+      confidence: 0.75
+      payload:
+        remove_label_ids: ["INBOX"]
+        add_label_ids: []
+
+  - id: deadlines_snooze
+    enabled: true
+    match:
+      any_cluster_keywords: ["deadline", "due", "invoice", "bill", "payment"]
+      any_message_keywords: ["due", "deadline", "expires", "payment due", "action required", "today", "tomorrow"]
+    propose:
+      action_type: "snooze"
+      urgency: "high"
+      confidence: 0.85
+      payload:
+        # keep empty for now; Day 9 can decide how to interpret snooze duration
+        {}
