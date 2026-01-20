@@ -147,6 +147,42 @@ async def google_exchange(payload: GoogleExchangeIn, session: AsyncSession = Dep
 
     scope_list = [s for s in scope_str.split(" ") if s.strip()] or None
 
+    # -------------------------
+    # NEW: Fetch Gmail profile and persist identity on User
+    # -------------------------
+    gmail_email: Optional[str] = None
+    history_id: Optional[str] = None
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            prof_resp = await client.get(
+                "https://gmail.googleapis.com/gmail/v1/users/me/profile",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        if prof_resp.status_code == 200:
+            profile = prof_resp.json()
+            gmail_email = profile.get("emailAddress") or None
+            # Gmail returns historyId as string-ish; keep it as string for DB consistency
+            history_id = str(profile.get("historyId")) if profile.get("historyId") is not None else None
+        else:
+            # Not fatal: token exchange succeeded; we just won't stamp the email
+            pass
+    except Exception:
+        # Not fatal: don't block OAuth if profile fetch fails intermittently
+        pass
+
+    user = await session.scalar(select(User).where(User.id == payload.user_id))
+    if user and gmail_email:
+        user.gmail_account_email = gmail_email
+
+        # If the user row is still the demo placeholder (or empty), overwrite it
+        if (not user.email) or user.email.endswith("@inboxsherpa.local"):
+            user.email = gmail_email
+
+        # Optional but recommended for incremental sync later
+        if history_id:
+            user.gmail_last_history_id = history_id
+
     # 1) Upsert gmail_tokens for this user
     existing_tok = await session.scalar(select(GmailToken).where(GmailToken.user_id == payload.user_id))
     if existing_tok:
@@ -195,4 +231,6 @@ async def google_exchange(payload: GoogleExchangeIn, session: AsyncSession = Dep
         "scope": scope_str,
         "expires_at": expires_at_dt.isoformat() if expires_at_dt else None,
         "has_refresh_token": True,
+        # Optional: useful for debugging multi-account
+        "gmail_account_email": gmail_email,
     }

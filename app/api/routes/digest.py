@@ -16,7 +16,7 @@ from app.services.clustering import cluster_messages_v1
 from app.services.action_rules import propose_actions
 from app.services.suggested_actions import upsert_suggested_action, list_suggested_actions
 
-# ✅ NEW: sync a specific day from Gmail before clustering
+# ✅ sync a specific day from Gmail before clustering
 from app.services.gmail_sync import sync_gmail_day
 
 router = APIRouter(prefix="/digest", tags=["digest"])
@@ -69,8 +69,9 @@ async def digest_today(
     user_id: uuid.UUID = Query(..., description="Dev-only: pass the user UUID"),
     digest_date: date | None = Query(None, description="Defaults to UTC today"),
     auto_cluster_if_missing: bool = Query(True, description="If no clusters for the day, run clustering"),
-    # ✅ NEW: if missing, sync that day from Gmail first
-    auto_sync_if_missing: bool = Query(True, description="If no clusters for the day, sync Gmail for that day first"),
+    auto_sync_if_missing: bool = Query(
+        True, description="If no clusters for the day, sync Gmail for that day first"
+    ),
     session: AsyncSession = Depends(get_session),
 ) -> DigestTodayOut:
     if digest_date is None:
@@ -83,9 +84,18 @@ async def digest_today(
     if (existing_count or 0) == 0 and auto_cluster_if_missing:
         # ✅ Option B: make sure messages for that specific day exist in DB
         if auto_sync_if_missing:
-            # This is safe: it dedupes on insert by unique constraint.
-            await sync_gmail_day(session, user_id=user_id, digest_date=digest_date, tz_name="America/Montreal", max_messages=500)
-
+            try:
+            # Safe: dedupes inserts via unique constraint
+                await sync_gmail_day(
+                    session,
+                    user_id=user_id,
+                    digest_date=digest_date,
+                    tz_name="America/Montreal",
+                    max_messages=500,
+                )
+            except RuntimeError as e:
+                if "No Gmail token stored" not in str(e):
+                    raise    
         await cluster_messages_v1(
             session=session,
             user_id=user_id,

@@ -19,6 +19,8 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      RUN_MIGRATIONS: "1"
     depends_on:
       db:
         condition: service_healthy
@@ -31,6 +33,8 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      RUN_MIGRATIONS: "0"
     depends_on:
       db:
         condition: service_healthy
