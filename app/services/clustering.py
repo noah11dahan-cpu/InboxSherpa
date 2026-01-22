@@ -4,14 +4,14 @@ from app.services.summarizer import summarize_cluster
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import date, datetime, timezone, timedelta
+from datetime import date, datetime, timezone
 from math import sqrt
 from typing import Any
 
 from sqlalchemy import delete, select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Cluster, Message, MessageStatus
+from app.models import Cluster, Message, MessageStatus, SuggestedAction  # ✅ add SuggestedAction
 
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -88,9 +88,12 @@ async def cluster_messages_v1(
     ✅ ROBUST FIX:
     Interpret digest_date as a *calendar day in digest_tz* using Postgres timezone().
     This avoids any UTC boundary math issues in Python.
+
+    ✅ Day 12 TEST STABILITY FIX:
+    When rebuilding clusters, also delete SuggestedActions attached to those old clusters.
+    Otherwise tests may pick a dangling proposed action whose cluster has 0 messages.
     """
     if digest_date is None:
-        # interpret "today" as UTC date fallback; digest endpoint should normally pass digest_date
         digest_date = datetime.now(timezone.utc).date()
 
     if rebuild_for_day:
@@ -99,11 +102,19 @@ async def cluster_messages_v1(
         )
         existing_ids = list(existing_cluster_ids.all())
         if existing_ids:
+            # 1) Detach messages from old clusters
             await session.execute(
                 update(Message)
                 .where(Message.user_id == user_id, Message.cluster_id.in_(existing_ids))
                 .values(cluster_id=None)
             )
+
+            # ✅ 2) Delete suggested actions pointing at old clusters (prevents stale/dangling actions)
+            await session.execute(
+                delete(SuggestedAction).where(SuggestedAction.cluster_id.in_(existing_ids))
+            )
+
+            # 3) Delete old clusters
             await session.execute(
                 delete(Cluster).where(Cluster.user_id == user_id, Cluster.digest_date == digest_date)
             )

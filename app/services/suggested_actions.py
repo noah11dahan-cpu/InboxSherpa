@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import SuggestedAction, ActionType, Urgency, SuggestionStatus
+
+
+def _now_utc() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 async def upsert_suggested_action(
@@ -23,6 +28,8 @@ async def upsert_suggested_action(
     - Dedupe key (v1): (user_id, cluster_id, action_type)
     - Never overwrite accepted/rejected
     - Update payload/urgency/confidence if still proposed
+    - IMPORTANT: If we update an existing proposed suggestion, bump created_at so "latest proposed"
+      corresponds to the most recently generated suggestion for test determinism.
     """
     existing = await session.scalar(
         select(SuggestedAction).where(
@@ -35,9 +42,13 @@ async def upsert_suggested_action(
     if existing is not None:
         if existing.status != SuggestionStatus.proposed:
             return existing
+
         existing.payload = payload
         existing.urgency = urgency
         existing.confidence = confidence
+
+        # ✅ Make it "latest" for tests / UI freshness
+        existing.created_at = _now_utc()
         return existing
 
     sa = SuggestedAction(
@@ -48,6 +59,7 @@ async def upsert_suggested_action(
         urgency=urgency,
         confidence=confidence,
         status=SuggestionStatus.proposed,
+        created_at=_now_utc(),  # optional but keeps it consistent
     )
     session.add(sa)
     return sa
