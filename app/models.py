@@ -12,6 +12,7 @@ from sqlalchemy import (
     UniqueConstraint,
     Index,
     func,
+    Integer
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -236,4 +237,33 @@ class GmailToken(Base):
 
     __table_args__ = (
         Index("ix_gmail_tokens_user_id", "user_id"),
+    )
+class PipelineRun(Base):
+    __tablename__ = "pipeline_runs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    # ex: "gmail_sync", "clustering_v1"
+    run_kind: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    # Optional: the day this run pertains to (local digest day)
+    digest_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now())
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    # Arbitrary structured info: inserted/deduped/scanned, clusters_created, etc.
+    meta: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
+    __table_args__ = (
+        Index("ix_pipeline_runs_user_kind_day", "user_id", "run_kind", "digest_date"),
+        Index("ix_pipeline_runs_user_started_at", "user_id", "started_at"),
     )

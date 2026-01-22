@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+import time
 import uuid
 from datetime import date, datetime, timezone
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.deps import get_session
-from app.models import Cluster, Message
+from app.models import Cluster, Message, PipelineRun
 from app.schemas.digest import DigestTodayOut, DigestClusterOut
 from app.schemas.summary import ClusterSummaryOut, Urgency
 from app.services.clustering import cluster_messages_v1
@@ -64,10 +66,15 @@ def _merge_summary(safe_title: str, count: int, summary_json: dict | None) -> di
     return data
 
 
+def _default_local_day(tz_name: str = "America/Montreal") -> date:
+    tz = ZoneInfo(tz_name)
+    return datetime.now(tz=tz).date()
+
+
 @router.get("/today", response_model=DigestTodayOut)
 async def digest_today(
     user_id: uuid.UUID = Query(..., description="Dev-only: pass the user UUID"),
-    digest_date: date | None = Query(None, description="Defaults to UTC today"),
+    digest_date: date | None = Query(None, description="Defaults to local today (America/Montreal)"),
     auto_cluster_if_missing: bool = Query(True, description="If no clusters for the day, run clustering"),
     auto_sync_if_missing: bool = Query(
         True, description="If no clusters for the day, sync Gmail for that day first"
@@ -75,17 +82,21 @@ async def digest_today(
     session: AsyncSession = Depends(get_session),
 ) -> DigestTodayOut:
     if digest_date is None:
-        digest_date = datetime.now(timezone.utc).date()
+        # Using local day avoids “off by one day” around midnight vs Gmail sync bounds.
+        digest_date = _default_local_day("America/Montreal")
 
     existing_count = await session.scalar(
-        select(func.count(Cluster.id)).where(Cluster.user_id == user_id, Cluster.digest_date == digest_date)
+        select(func.count(Cluster.id)).where(
+            Cluster.user_id == user_id,
+            Cluster.digest_date == digest_date,
+        )
     )
 
     if (existing_count or 0) == 0 and auto_cluster_if_missing:
         # ✅ Option B: make sure messages for that specific day exist in DB
         if auto_sync_if_missing:
             try:
-            # Safe: dedupes inserts via unique constraint
+                # Safe: dedupes inserts via unique constraint
                 await sync_gmail_day(
                     session,
                     user_id=user_id,
@@ -94,15 +105,40 @@ async def digest_today(
                     max_messages=500,
                 )
             except RuntimeError as e:
+                # Allow “not connected yet” in dev without killing the endpoint
                 if "No Gmail token stored" not in str(e):
-                    raise    
-        await cluster_messages_v1(
-            session=session,
+                    raise
+
+        # ✅ Day 11: record clustering runtime
+        t0 = time.perf_counter()
+        pr = PipelineRun(
             user_id=user_id,
+            run_kind="clustering_v1",
             digest_date=digest_date,
-            only_inbox=False,
-            rebuild_for_day=True,
+            started_at=datetime.utcnow().astimezone(),
+            meta=None,
         )
+        session.add(pr)
+        await session.flush()
+
+        try:
+            await cluster_messages_v1(
+                session=session,
+                user_id=user_id,
+                digest_date=digest_date,
+                only_inbox=False,
+                rebuild_for_day=True,
+            )
+            pr.finished_at = datetime.utcnow().astimezone()
+            pr.duration_ms = int((time.perf_counter() - t0) * 1000)
+            pr.meta = {"ok": True}
+            await session.commit()
+        except Exception as e:
+            pr.finished_at = datetime.utcnow().astimezone()
+            pr.duration_ms = int((time.perf_counter() - t0) * 1000)
+            pr.meta = {"ok": False, "error": str(e)}
+            await session.commit()
+            raise
 
     rows = await session.execute(
         select(
@@ -127,7 +163,10 @@ async def digest_today(
         data = _merge_summary(safe_title, count, summary_json)
 
         msg_rows = await session.execute(
-            select(Message.subject, Message.body_text).where(Message.cluster_id == cid, Message.user_id == user_id)
+            select(Message.subject, Message.body_text).where(
+                Message.cluster_id == cid,
+                Message.user_id == user_id,
+            )
         )
         msg_pairs = msg_rows.all()
         subjects = [s for (s, _) in msg_pairs if s]
@@ -136,7 +175,10 @@ async def digest_today(
         proposed = propose_actions(cluster_title=safe_title, message_subjects=subjects, message_bodies=bodies)
 
         thread_rows = await session.execute(
-            select(Message.thread_external_id).where(Message.cluster_id == cid, Message.user_id == user_id)
+            select(Message.thread_external_id).where(
+                Message.cluster_id == cid,
+                Message.user_id == user_id,
+            )
         )
         thread_ids = sorted({t for (t,) in thread_rows.all() if t})
 
