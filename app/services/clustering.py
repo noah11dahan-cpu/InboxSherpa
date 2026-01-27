@@ -6,7 +6,6 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from math import sqrt
-from typing import Any
 
 from sqlalchemy import delete, select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession

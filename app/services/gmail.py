@@ -103,9 +103,9 @@ async def ensure_label_id(*, access_token: str, label_name: str) -> str:
         raise GmailError("label_name is empty")
 
     labels = await list_labels(access_token=access_token)
-    for l in labels:
-        if (l.get("name") or "").strip().lower() == name.lower():
-            lid = l.get("id")
+    for label in labels:
+        if (label.get("name") or "").strip().lower() == name.lower():
+            lid = label.get("id")
             if isinstance(lid, str) and lid:
                 return lid
 

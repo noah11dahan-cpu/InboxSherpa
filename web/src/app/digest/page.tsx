@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DigestTodayOut, getDigestToday, applySuggestedAction } from "@/lib/api";
 
@@ -16,6 +16,14 @@ function yyyyMmDdToday(): string {
 const LS_USER_ID = "inboxsherpa_user_id";
 
 export default function DigestPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-gray-600">Loading...</div>}>
+      <DigestPageContent />
+    </Suspense>
+  );
+}
+
+function DigestPageContent() {
   const sp = useSearchParams();
 
   const [userId, setUserId] = useState<string>("");

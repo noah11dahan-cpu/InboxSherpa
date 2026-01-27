@@ -6,7 +6,7 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.deps import get_session
@@ -14,6 +14,7 @@ from app.models import (
     Cluster,
     Message,
     PipelineRun,
+    SuggestedAction,
     ActionType as ModelActionType,
     Urgency as ModelUrgency,
 )
@@ -174,6 +175,18 @@ async def digest_today(
             await session.commit()
             raise
 
+    # ✅ FIX 1 (the one you asked about):
+    # Clean up any dangling SuggestedActions for this user (cluster was deleted/rebuilt).
+    # IMPORTANT: do NOT restrict to digest_date here, or you'd delete actions for other days.
+    valid_cluster_ids = select(Cluster.id).where(Cluster.user_id == user_id)
+    await session.execute(
+        delete(SuggestedAction).where(
+            SuggestedAction.user_id == user_id,
+            ~SuggestedAction.cluster_id.in_(valid_cluster_ids),
+        )
+    )
+    await session.commit()
+
     rows = await session.execute(
         select(
             Cluster.id,
@@ -237,9 +250,9 @@ async def digest_today(
             )
             any_db_writes = True
 
-        # ✅ Safety net: if zero rules matched, still create 1 "proposed" action
-        # This prevents tests from flaking when clustering titles/text don’t match YAML keywords.
-        if not proposed:
+        # ✅ Safety net: only create a default action if the cluster actually has messages.
+        # Prevents creating actions for empty clusters that will always join to 0 messages.
+        if not proposed and count > 0:
             await upsert_suggested_action(
                 session,
                 user_id=user_id,
