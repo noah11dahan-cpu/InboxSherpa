@@ -12,28 +12,37 @@ export default function Home() {
 
   async function connectGmail() {
     const base = process.env.NEXT_PUBLIC_API_BASE_URL!;
-    const userId = process.env.NEXT_PUBLIC_DEV_USER_ID!;
+    // Use stored user ID from demo, or fall back to env var
+    const storedUserId = localStorage.getItem(LS_USER_ID);
+    const userId = storedUserId || process.env.NEXT_PUBLIC_DEV_USER_ID;
     if (!userId) {
-      alert("Missing NEXT_PUBLIC_DEV_USER_ID in web/.env.local");
+      setError("Click 'Try Demo' first to create a user, then connect Gmail.");
       return;
     }
 
-    const r = await fetch(`${base}/auth/google/start?user_id=${encodeURIComponent(userId)}`);
-    if (!r.ok) {
-      const t = await r.text();
-      alert(`Failed to start OAuth: ${t}`);
-      return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const r = await fetch(`${base}/auth/google/start?user_id=${encodeURIComponent(userId)}`);
+      if (!r.ok) {
+        const t = await r.text();
+        throw new Error(`OAuth failed: ${t}`);
+      }
+
+      const data = await r.json();
+
+      // store PKCE info for callback page
+      sessionStorage.setItem("oauth_state", data.state);
+      sessionStorage.setItem("oauth_code_verifier", data.code_verifier);
+      sessionStorage.setItem("oauth_user_id", userId);
+      sessionStorage.setItem("oauth_redirect_uri", data.redirect_uri);
+
+      window.location.href = data.auth_url;
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
+      setLoading(false);
     }
-
-    const data = await r.json();
-
-    // store PKCE info for callback page
-    sessionStorage.setItem("oauth_state", data.state);
-    sessionStorage.setItem("oauth_code_verifier", data.code_verifier);
-    sessionStorage.setItem("oauth_user_id", userId);
-    sessionStorage.setItem("oauth_redirect_uri", data.redirect_uri);
-
-    window.location.href = data.auth_url;
   }
 
   async function tryDemo() {

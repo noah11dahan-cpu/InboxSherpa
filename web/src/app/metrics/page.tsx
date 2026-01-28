@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getLatestPipelineRun, PipelineRunOut } from "@/lib/api";
+import { fetchJson, getLatestPipelineRun, PipelineRunOut } from "@/lib/api";
 
 const LS_USER_ID = "inboxsherpa_user_id";
 
@@ -15,26 +15,6 @@ type MetricsOut = {
   actions_accepted_today: number;
   actions_rejected_today: number;
 };
-
-function apiBaseUrl(): string {
-  const v = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!v) {
-    throw new Error(
-      "NEXT_PUBLIC_API_BASE_URL is not set. Create web/.env.local (see web/.env.example)."
-    );
-  }
-  return v.replace(/\/+$/, "");
-}
-
-async function fetchJson<T>(path: string): Promise<T> {
-  const url = `${apiBaseUrl()}${path}`;
-  const r = await fetch(url, { cache: "no-store", mode: "cors" });
-  if (!r.ok) {
-    const text = await r.text().catch(() => "");
-    throw new Error(`API ${r.status}: ${text || r.statusText}`);
-  }
-  return (await r.json()) as T;
-}
 
 export default function MetricsPage() {
   const [userId, setUserId] = useState<string>("");

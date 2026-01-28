@@ -11,19 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.deps import get_session
 from app.models import Cluster, Message, SuggestedAction
 from app.schemas.cluster_detail import ClusterDetailOut, ClusterMessageOut
-from app.schemas.summary import ClusterSummaryOut, Urgency
+from app.schemas.summary import ClusterSummaryOut
+from app.utils.summary import fallback_summary
 
 router = APIRouter(prefix="/clusters", tags=["clusters"])
-
-
-def _fallback_summary(title: str, count: int) -> dict[str, Any]:
-    return {
-        "cluster_title": title,
-        "summary_bullets": [f"{count} messages in this cluster."],
-        "urgency": Urgency.low.value,
-        "suggested_actions": [],
-        "confidence": 0.40,
-    }
 
 
 def _safe_enum_value(v: Any) -> str:
@@ -104,7 +95,7 @@ async def cluster_detail(
 
     # Base summary from Cluster.summary_json, but we will override suggested_actions from DB
     base = cluster.summary_json if isinstance(cluster.summary_json, dict) else {}
-    fb = _fallback_summary(cluster.title or "Other", message_count)
+    fb = fallback_summary(cluster.title or "Other", message_count)
     summary_data: dict[str, Any] = {**fb, **base}
 
     # Pull SuggestedAction rows from DB so we have real ids + status

@@ -78,7 +78,7 @@ export type PipelineRunOut = {
   meta: Record<string, unknown> | null;
 };
 
-function apiBaseUrl(): string {
+export function apiBaseUrl(): string {
   const v = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!v) {
     throw new Error(
@@ -88,7 +88,7 @@ function apiBaseUrl(): string {
   return v.replace(/\/+$/, "");
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
+export async function fetchJson<T>(path: string): Promise<T> {
   const url = `${apiBaseUrl()}${path}`;
   const r = await fetch(url, { cache: "no-store", mode: "cors" });
   if (!r.ok) {

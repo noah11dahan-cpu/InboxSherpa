@@ -27,22 +27,13 @@ from app.services.suggested_actions import upsert_suggested_action, list_suggest
 
 # ✅ sync a specific day from Gmail before clustering
 from app.services.gmail_sync import sync_gmail_day
+from app.utils.summary import fallback_summary
 
 router = APIRouter(prefix="/digest", tags=["digest"])
 
 
-def _fallback_summary(title: str, count: int) -> dict:
-    return {
-        "cluster_title": title,
-        "summary_bullets": [f"{count} messages in this cluster."],
-        "urgency": SummaryUrgency.low.value,
-        "suggested_actions": [],
-        "confidence": 0.40,
-    }
-
-
 def _merge_summary(safe_title: str, count: int, summary_json: dict | None) -> dict:
-    data = _fallback_summary(safe_title, count)
+    data = fallback_summary(safe_title, count)
 
     if isinstance(summary_json, dict) and summary_json:
         data.update(summary_json)
