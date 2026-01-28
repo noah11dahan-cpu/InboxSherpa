@@ -1,0 +1,1906 @@
+{
+  "description": "100 test clusters with good and bad summaries for AI eval harness",
+  "version": "1.1.0",
+  "test_cases": [
+    {
+      "id": "cluster_001",
+      "category": "promotions",
+      "messages": [
+        {"subject": "50% OFF Summer Sale Ends Tonight!", "body": "Don't miss our biggest sale of the year. Shop now for exclusive deals on electronics."},
+        {"subject": "Flash Sale: Extra 20% Off Everything", "body": "Use code FLASH20 at checkout. Limited time offer."},
+        {"subject": "Your Weekly Deals Newsletter", "body": "Check out this week's top deals and discounts from your favorite brands."}
+      ],
+      "good_summary": {
+        "title": "Sale / Deals / Off",
+        "bullets": ["3 messages about sales and deals.", "Summer sale 50% off ends tonight.", "Flash sale with code FLASH20 for extra 20% off.", "Weekly deals newsletter from brands."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Important Messages",
+        "bullets": ["You have messages.", "Check them out."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_002",
+      "category": "urgent_bills",
+      "messages": [
+        {"subject": "URGENT: Payment Overdue - Account #12345", "body": "Your payment is 30 days overdue. Please pay immediately to avoid service interruption."},
+        {"subject": "Final Notice: Invoice Due Tomorrow", "body": "This is your final notice. Invoice #789 for $150 is due by end of business tomorrow."},
+        {"subject": "Action Required: Update Payment Method", "body": "Your card on file has expired. Update your payment method to continue service."}
+      ],
+      "good_summary": {
+        "title": "Payment / Overdue / Invoice",
+        "bullets": ["3 urgent payment messages.", "Payment 30 days overdue on account #12345.", "Final notice: invoice $150 due tomorrow.", "Action required: update expired card payment method."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Random Stuff",
+        "bullets": ["Some emails here."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_003",
+      "category": "school",
+      "messages": [
+        {"subject": "Assignment 3 Due Friday", "body": "Reminder: Your research paper is due this Friday at 11:59 PM."},
+        {"subject": "Class Cancelled Tomorrow", "body": "Due to weather, tomorrow's lecture is cancelled. See you next week."},
+        {"subject": "Grade Posted for Midterm Exam", "body": "Your midterm grade has been posted. Check the portal for details."}
+      ],
+      "good_summary": {
+        "title": "Assignment / Class / Grade",
+        "bullets": ["3 school-related messages.", "Assignment 3 research paper due Friday 11:59 PM.", "Class lecture cancelled tomorrow due to weather.", "Midterm exam grade posted on portal."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "xyz",
+        "bullets": ["stuff", "things", "more stuff", "even more", "too much", "way too much", "excessive"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_004",
+      "category": "social",
+      "messages": [
+        {"subject": "John liked your photo", "body": "John Smith liked your photo on Instagram."},
+        {"subject": "New follower: Sarah", "body": "Sarah Johnson started following you."},
+        {"subject": "You have 5 new notifications", "body": "See what's happening in your network."}
+      ],
+      "good_summary": {
+        "title": "Photo / Follower / Notifications",
+        "bullets": ["3 social media notifications.", "John Smith liked your photo on Instagram.", "Sarah Johnson new follower.", "5 new notifications in your network."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "URGENT SECURITY ALERT",
+        "bullets": ["Immediate action required!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_005",
+      "category": "work",
+      "messages": [
+        {"subject": "Q3 Report Review Meeting", "body": "Please join us Thursday at 2 PM to review the Q3 financial report."},
+        {"subject": "Project Alpha Status Update", "body": "Here's this week's status update on Project Alpha milestones."},
+        {"subject": "Team Standup Notes - Oct 15", "body": "Attached are the notes from today's standup meeting."}
+      ],
+      "good_summary": {
+        "title": "Meeting / Project / Report",
+        "bullets": ["3 work communications.", "Q3 report review meeting Thursday 2 PM.", "Project Alpha status update on milestones.", "Team standup notes from Oct 15."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "",
+        "bullets": [],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_006",
+      "category": "security",
+      "messages": [
+        {"subject": "Security Alert: New login from unknown device", "body": "We detected a login to your account from a new device in New York."},
+        {"subject": "Verify your identity", "body": "Please verify your identity to continue using your account."},
+        {"subject": "Password changed successfully", "body": "Your password was changed. If this wasn't you, contact support immediately."}
+      ],
+      "good_summary": {
+        "title": "Security / Login / Verify",
+        "bullets": ["3 security alerts.", "New login detected from unknown device in New York.", "Verify your identity to continue account access.", "Password changed - contact support if not you."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Newsletter Updates",
+        "bullets": ["Weekly newsletter content.", "Subscribe for more."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_007",
+      "category": "travel",
+      "messages": [
+        {"subject": "Your flight confirmation - NYC to LAX", "body": "Confirmation #ABC123. Departing JFK at 8:00 AM on Nov 1."},
+        {"subject": "Hotel reservation confirmed", "body": "Your stay at Grand Hotel is confirmed for Nov 1-5."},
+        {"subject": "Rental car pickup details", "body": "Pick up your rental at LAX Terminal 1 on Nov 1 at 11:00 AM."}
+      ],
+      "good_summary": {
+        "title": "Flight / Hotel / Rental",
+        "bullets": ["3 travel confirmations.", "Flight NYC to LAX departing JFK 8 AM Nov 1, confirmation ABC123.", "Hotel reservation Grand Hotel Nov 1-5.", "Rental car pickup LAX Terminal 1 at 11 AM."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Miscellaneous Items That Don't Really Fit Any Category And Have A Very Long Title",
+        "bullets": ["This is an extremely long bullet point that goes on and on and on without really saying anything meaningful about the actual content of the messages, which defeats the purpose of having a concise summary in the first place, and continues to ramble without end."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_008",
+      "category": "newsletters",
+      "messages": [
+        {"subject": "Tech Weekly: AI Trends 2024", "body": "This week's top stories in artificial intelligence and machine learning."},
+        {"subject": "The Morning Brew", "body": "Your daily business news digest in 5 minutes."},
+        {"subject": "Product Hunt Daily Digest", "body": "Top 5 products launched today on Product Hunt."}
+      ],
+      "good_summary": {
+        "title": "Weekly / Digest / News",
+        "bullets": ["3 newsletter subscriptions.", "Tech Weekly covering AI trends and machine learning.", "Morning Brew daily business news digest.", "Product Hunt daily digest with top 5 products."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Critical System Failure",
+        "bullets": ["Emergency response needed.", "All hands on deck."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_009",
+      "category": "banking",
+      "messages": [
+        {"subject": "Your monthly statement is ready", "body": "Your October statement for account ending in 4567 is now available."},
+        {"subject": "Direct deposit received: $2,500.00", "body": "A direct deposit of $2,500.00 has been credited to your account."},
+        {"subject": "Low balance alert", "body": "Your checking account balance is below $100."}
+      ],
+      "good_summary": {
+        "title": "Statement / Deposit / Balance",
+        "bullets": ["3 banking notifications.", "Monthly statement ready for account ending 4567.", "Direct deposit $2,500 credited to account.", "Low balance alert: checking below $100."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Fun Times",
+        "bullets": ["Party!", "Woohoo!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_010",
+      "category": "shipping",
+      "messages": [
+        {"subject": "Your package has shipped!", "body": "Tracking #: 1Z999AA10123456784. Expected delivery: Oct 20."},
+        {"subject": "Delivery scheduled for tomorrow", "body": "Your Amazon package will arrive tomorrow between 12-6 PM."},
+        {"subject": "Package delivered", "body": "Your package was delivered and left at the front door."}
+      ],
+      "good_summary": {
+        "title": "Package / Delivery / Shipped",
+        "bullets": ["3 shipping updates.", "Package shipped with tracking 1Z999AA10123456784, delivery Oct 20.", "Amazon package delivery tomorrow 12-6 PM.", "Package delivered at front door."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Unknown",
+        "bullets": ["???"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_011",
+      "category": "calendar",
+      "messages": [
+        {"subject": "Reminder: Dentist appointment tomorrow", "body": "Don't forget your dental checkup at 10 AM tomorrow."},
+        {"subject": "Event: Team lunch at noon", "body": "Join us for the monthly team lunch at the Italian place."},
+        {"subject": "Meeting rescheduled to 3 PM", "body": "The 2 PM meeting has been moved to 3 PM."}
+      ],
+      "good_summary": {
+        "title": "Appointment / Meeting / Lunch",
+        "bullets": ["3 calendar reminders.", "Dentist appointment tomorrow at 10 AM.", "Team lunch event at noon at Italian place.", "Meeting rescheduled from 2 PM to 3 PM."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "AB",
+        "bullets": ["X"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_012",
+      "category": "receipts",
+      "messages": [
+        {"subject": "Receipt for your purchase - $45.99", "body": "Thank you for your purchase at Store ABC."},
+        {"subject": "Order confirmation #98765", "body": "Your order has been confirmed and will ship within 2 days."},
+        {"subject": "Payment received - Invoice #2345", "body": "We received your payment of $120.00. Thank you!"}
+      ],
+      "good_summary": {
+        "title": "Receipt / Order / Payment",
+        "bullets": ["3 purchase confirmations.", "Receipt $45.99 from Store ABC.", "Order #98765 confirmed, ships within 2 days.", "Payment $120 received for invoice #2345."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Urgent Deadline Action Required Immediately",
+        "bullets": ["Act now!", "Don't delay!", "Critical!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_013",
+      "category": "support",
+      "messages": [
+        {"subject": "Re: Ticket #4567 - Issue resolved", "body": "Your support ticket has been resolved. Please let us know if you need further assistance."},
+        {"subject": "How was your support experience?", "body": "Please take a moment to rate your recent support interaction."},
+        {"subject": "Case update: Refund processed", "body": "Your refund of $50 has been processed and will appear in 3-5 days."}
+      ],
+      "good_summary": {
+        "title": "Ticket / Support / Refund",
+        "bullets": ["3 support communications.", "Ticket #4567 issue resolved.", "Rate your support experience.", "Refund $50 processed, appears in 3-5 days."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Completely Unrelated Title About Cats",
+        "bullets": ["Meow meow.", "Cats are great."],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_014",
+      "category": "subscriptions",
+      "messages": [
+        {"subject": "Your subscription renews in 7 days", "body": "Your Netflix subscription will auto-renew on Oct 25 for $15.99."},
+        {"subject": "Spotify Premium: Payment failed", "body": "We couldn't process your payment. Update your payment method to continue."},
+        {"subject": "Welcome to Disney+!", "body": "Thank you for subscribing to Disney+. Start streaming now!"}
+      ],
+      "good_summary": {
+        "title": "Subscription / Payment / Streaming",
+        "bullets": ["3 streaming service messages.", "Netflix subscription renews Oct 25 for $15.99.", "Spotify Premium payment failed, update payment method.", "Welcome to Disney+ streaming."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Fish",
+        "bullets": ["Swimming.", "Water."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_015",
+      "category": "healthcare",
+      "messages": [
+        {"subject": "Lab results ready", "body": "Your lab results from your Oct 10 visit are now available in the patient portal."},
+        {"subject": "Prescription ready for pickup", "body": "Your prescription is ready at CVS Pharmacy."},
+        {"subject": "Appointment reminder: Dr. Smith - Oct 22", "body": "Don't forget your appointment with Dr. Smith on Oct 22 at 2:30 PM."}
+      ],
+      "good_summary": {
+        "title": "Lab / Prescription / Appointment",
+        "bullets": ["3 healthcare messages.", "Lab results from Oct 10 visit available in patient portal.", "Prescription ready for pickup at CVS Pharmacy.", "Appointment with Dr. Smith Oct 22 at 2:30 PM."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Random Numbers 12345",
+        "bullets": ["1", "2", "3"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_016",
+      "category": "jobs",
+      "messages": [
+        {"subject": "Application received: Software Engineer at TechCo", "body": "We received your application and will review it shortly."},
+        {"subject": "Interview invitation - Product Manager role", "body": "We'd like to schedule an interview for the PM position. Are you available next week?"},
+        {"subject": "LinkedIn: 5 new job matches", "body": "Based on your profile, we found 5 new jobs that might interest you."}
+      ],
+      "good_summary": {
+        "title": "Application / Interview / Jobs",
+        "bullets": ["3 job search messages.", "Application received for Software Engineer at TechCo.", "Interview invitation for Product Manager role next week.", "LinkedIn found 5 new job matches for your profile."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Old Archived Stuff",
+        "bullets": ["Ancient history."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_017",
+      "category": "family",
+      "messages": [
+        {"subject": "Photos from Thanksgiving", "body": "Here are the photos from last weekend! Great seeing everyone."},
+        {"subject": "Re: Mom's birthday plans", "body": "Let's do dinner at 6 PM. I'll make the reservation."},
+        {"subject": "Kids' soccer schedule", "body": "Attached is the fall soccer schedule. Games are on Saturdays."}
+      ],
+      "good_summary": {
+        "title": "Photos / Birthday / Soccer",
+        "bullets": ["3 family messages.", "Photos from Thanksgiving weekend.", "Mom's birthday dinner at 6 PM, making reservation.", "Kids' fall soccer schedule, games on Saturdays."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "SYSTEM ERROR 500",
+        "bullets": ["Critical failure.", "Contact admin."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_018",
+      "category": "legal",
+      "messages": [
+        {"subject": "Contract review needed by Friday", "body": "Please review the attached contract and provide feedback by EOD Friday."},
+        {"subject": "NDA for signature", "body": "Please sign the attached NDA before we can proceed with the partnership."},
+        {"subject": "Terms of Service Update", "body": "We've updated our Terms of Service. Please review the changes."}
+      ],
+      "good_summary": {
+        "title": "Contract / NDA / Terms",
+        "bullets": ["3 legal documents.", "Contract review needed by EOD Friday.", "NDA signature required for partnership.", "Terms of Service updated, review changes."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Puppies and Rainbows",
+        "bullets": ["So cute!", "Very pretty!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_019",
+      "category": "insurance",
+      "messages": [
+        {"subject": "Your auto insurance policy renewal", "body": "Your policy renews on Nov 1. Review your coverage options."},
+        {"subject": "Claim #12345 approved", "body": "Your insurance claim has been approved. Payment will be issued within 10 days."},
+        {"subject": "Important: Policy documents enclosed", "body": "Your updated policy documents are attached. Please review and keep for your records."}
+      ],
+      "good_summary": {
+        "title": "Insurance / Policy / Claim",
+        "bullets": ["3 insurance messages.", "Auto insurance policy renews Nov 1, review coverage.", "Claim #12345 approved, payment within 10 days.", "Updated policy documents attached for records."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Spam Spam Spam",
+        "bullets": ["Delete this.", "Junk mail."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_020",
+      "category": "utilities",
+      "messages": [
+        {"subject": "Electric bill due Oct 28 - $145.67", "body": "Your electric bill is due on Oct 28. Pay online to avoid late fees."},
+        {"subject": "Water service maintenance notice", "body": "Scheduled maintenance on Oct 25 may cause temporary service interruption."},
+        {"subject": "Gas bill payment confirmation", "body": "We received your payment of $78.50. Thank you!"}
+      ],
+      "good_summary": {
+        "title": "Electric / Bill / Payment",
+        "bullets": ["3 utility messages.", "Electric bill $145.67 due Oct 28, pay online.", "Water service maintenance Oct 25, possible interruption.", "Gas bill payment $78.50 confirmed."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Vacation Dreams",
+        "bullets": ["Beach time!", "Relax mode."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_021",
+      "category": "government",
+      "messages": [
+        {"subject": "Tax refund status update", "body": "Your federal tax refund of $1,234 has been approved and will be deposited within 21 days."},
+        {"subject": "DMV appointment confirmation", "body": "Your DMV appointment is confirmed for Oct 30 at 10:00 AM."},
+        {"subject": "Jury duty summons", "body": "You have been summoned for jury duty on Nov 15. Please review the attached instructions."}
+      ],
+      "good_summary": {
+        "title": "Tax / DMV / Jury",
+        "bullets": ["3 government messages.", "Tax refund $1,234 approved, deposit within 21 days.", "DMV appointment confirmed Oct 30 at 10 AM.", "Jury duty summons for Nov 15, review instructions."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Fun Games",
+        "bullets": ["Play now!", "High scores!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_022",
+      "category": "education",
+      "messages": [
+        {"subject": "Course enrollment confirmation", "body": "You are now enrolled in CS 101 for Spring semester."},
+        {"subject": "Financial aid award letter", "body": "Your financial aid package for the upcoming year is attached."},
+        {"subject": "Graduation application deadline: Nov 1", "body": "Submit your graduation application by Nov 1 to graduate in December."}
+      ],
+      "good_summary": {
+        "title": "Course / Financial / Graduation",
+        "bullets": ["3 university messages.", "Enrolled in CS 101 for Spring semester.", "Financial aid award package attached.", "Graduation application deadline Nov 1 for December graduation."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Boring Stuff",
+        "bullets": ["Yawn.", "Skip this."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_023",
+      "category": "real_estate",
+      "messages": [
+        {"subject": "New listing: 123 Main St", "body": "A new property matching your search criteria is now available."},
+        {"subject": "Rent payment received", "body": "We received your October rent payment. Thank you!"},
+        {"subject": "Lease renewal reminder", "body": "Your lease expires Dec 31. Please let us know if you'd like to renew."}
+      ],
+      "good_summary": {
+        "title": "Listing / Rent / Lease",
+        "bullets": ["3 real estate messages.", "New property listing at 123 Main St matching search.", "October rent payment received.", "Lease expires Dec 31, renewal reminder."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Space Aliens",
+        "bullets": ["UFO sighting!", "Beam me up!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_024",
+      "category": "fitness",
+      "messages": [
+        {"subject": "Your weekly workout summary", "body": "You completed 5 workouts this week and burned 2,500 calories!"},
+        {"subject": "Gym membership renewal", "body": "Your gym membership expires Oct 31. Renew now to keep your rate."},
+        {"subject": "New class added: Yoga Fridays", "body": "We've added a new yoga class on Fridays at 6 PM."}
+      ],
+      "good_summary": {
+        "title": "Workout / Gym / Yoga",
+        "bullets": ["3 fitness messages.", "Weekly workout summary: 5 workouts, 2,500 calories burned.", "Gym membership expires Oct 31, renew to keep rate.", "New yoga class added Fridays at 6 PM."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "ALERT ALERT ALERT",
+        "bullets": ["EMERGENCY!", "PANIC!", "RUN!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_025",
+      "category": "food_delivery",
+      "messages": [
+        {"subject": "Your DoorDash order is on the way", "body": "Your order from Thai Palace is being delivered. ETA: 25 minutes."},
+        {"subject": "Rate your recent order", "body": "How was your meal from Pizza Hut? Leave a review!"},
+        {"subject": "$5 off your next Uber Eats order", "body": "Use code SAVE5 on your next order of $20 or more."}
+      ],
+      "good_summary": {
+        "title": "Order / DoorDash / Delivery",
+        "bullets": ["3 food delivery messages.", "DoorDash order from Thai Palace, ETA 25 minutes.", "Rate your Pizza Hut meal.", "Uber Eats $5 off code SAVE5 on orders $20+."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Quantum Physics Explained",
+        "bullets": ["Wave functions.", "Uncertainty principle."],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_026",
+      "category": "automotive",
+      "messages": [
+        {"subject": "Service reminder: Oil change due", "body": "Your vehicle is due for an oil change. Schedule your appointment today."},
+        {"subject": "Recall notice: Safety update required", "body": "Your vehicle is affected by a safety recall. Please contact your dealer."},
+        {"subject": "Car payment processed", "body": "Your monthly car payment of $350 has been processed."}
+      ],
+      "good_summary": {
+        "title": "Service / Recall / Car",
+        "bullets": ["3 automotive messages.", "Oil change service reminder, schedule appointment.", "Safety recall notice, contact dealer.", "Monthly car payment $350 processed."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Sunshine",
+        "bullets": ["Nice weather.", "Go outside."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_027",
+      "category": "pets",
+      "messages": [
+        {"subject": "Vet appointment reminder: Fluffy", "body": "Fluffy's annual checkup is scheduled for Oct 24 at 3 PM."},
+        {"subject": "Your pet food order has shipped", "body": "Your Chewy order is on the way. Expected delivery: Oct 22."},
+        {"subject": "Pet insurance claim processed", "body": "Your claim for $200 has been approved and payment is on the way."}
+      ],
+      "good_summary": {
+        "title": "Vet / Pet / Chewy",
+        "bullets": ["3 pet-related messages.", "Vet appointment for Fluffy Oct 24 at 3 PM.", "Chewy pet food order shipped, delivery Oct 22.", "Pet insurance claim $200 approved, payment coming."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Stock Market Crash",
+        "bullets": ["Sell everything!", "Markets plunge!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_028",
+      "category": "donations",
+      "messages": [
+        {"subject": "Thank you for your donation!", "body": "Your $50 donation to Red Cross has been received. Thank you for your generosity!"},
+        {"subject": "Year-end giving opportunity", "body": "Make a tax-deductible donation before Dec 31."},
+        {"subject": "Donation receipt for tax purposes", "body": "Attached is your donation receipt for $100 to Local Food Bank."}
+      ],
+      "good_summary": {
+        "title": "Donation / Receipt / Tax",
+        "bullets": ["3 charitable messages.", "Red Cross donation $50 received.", "Year-end tax-deductible giving opportunity before Dec 31.", "Donation receipt $100 to Local Food Bank for tax purposes."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Mystery Box",
+        "bullets": ["What's inside?", "Open to find out!"],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_029",
+      "category": "events",
+      "messages": [
+        {"subject": "You're invited: Sarah's Wedding", "body": "Please join us for Sarah and John's wedding on Dec 15 at 4 PM."},
+        {"subject": "Concert tickets confirmed", "body": "Your tickets for the Taylor Swift concert on Nov 20 are confirmed."},
+        {"subject": "RSVP reminder: Company holiday party", "body": "Please RSVP by Oct 25 for the Dec 10 holiday party."}
+      ],
+      "good_summary": {
+        "title": "Wedding / Concert / Party",
+        "bullets": ["3 event invitations.", "Sarah's wedding Dec 15 at 4 PM.", "Taylor Swift concert tickets confirmed Nov 20.", "Company holiday party Dec 10, RSVP by Oct 25."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Error 404",
+        "bullets": ["Page not found.", "Try again later."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_030",
+      "category": "gaming",
+      "messages": [
+        {"subject": "Your PlayStation Plus membership expires soon", "body": "Renew now to keep your online gaming access and free monthly games."},
+        {"subject": "New game release: Cyberpunk 2078", "body": "Pre-order now and get exclusive in-game items."},
+        {"subject": "Weekly challenge completed!", "body": "You earned 500 points this week. Check out the rewards store."}
+      ],
+      "good_summary": {
+        "title": "PlayStation / Game / Points",
+        "bullets": ["3 gaming messages.", "PlayStation Plus membership expires, renew for online gaming.", "Cyberpunk 2078 new release, pre-order for exclusive items.", "Weekly challenge completed, 500 points earned."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Mortgage Rates",
+        "bullets": ["30-year fixed.", "Refinance now."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_031",
+      "category": "cloud_storage",
+      "messages": [
+        {"subject": "Storage almost full: 90% used", "body": "Your Google Drive is almost full. Upgrade to get more space."},
+        {"subject": "File shared with you: Q3 Report.pdf", "body": "John shared a file with you. Click to view."},
+        {"subject": "Dropbox: 2 files synced", "body": "2 files were recently synced to your Dropbox account."}
+      ],
+      "good_summary": {
+        "title": "Storage / Drive / Files",
+        "bullets": ["3 cloud storage messages.", "Google Drive 90% full, upgrade for more space.", "File shared: Q3 Report.pdf from John.", "Dropbox synced 2 files to account."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Cooking Recipes",
+        "bullets": ["Try this soup!", "Yummy cakes."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_032",
+      "category": "webinars",
+      "messages": [
+        {"subject": "Webinar tomorrow: Marketing Trends 2024", "body": "Join us tomorrow at 1 PM EST for our live webinar."},
+        {"subject": "Recording available: Data Science Workshop", "body": "Missed the live session? Watch the recording now."},
+        {"subject": "Reminder: You're registered for tomorrow's event", "body": "Don't forget to join tomorrow's webinar on AI in Business."}
+      ],
+      "good_summary": {
+        "title": "Webinar / Recording / Tomorrow",
+        "bullets": ["3 webinar messages.", "Marketing Trends 2024 webinar tomorrow 1 PM EST.", "Data Science Workshop recording available.", "Reminder: registered for AI in Business webinar tomorrow."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Zebras and Giraffes",
+        "bullets": ["Safari time!", "Wild animals."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_033",
+      "category": "password_reset",
+      "messages": [
+        {"subject": "Password reset requested", "body": "Click the link below to reset your password. Link expires in 1 hour."},
+        {"subject": "Your password was changed", "body": "Your account password was successfully changed. If this wasn't you, contact support."},
+        {"subject": "Two-factor authentication enabled", "body": "2FA is now enabled on your account for extra security."}
+      ],
+      "good_summary": {
+        "title": "Password / Security / Account",
+        "bullets": ["3 account security messages.", "Password reset requested, link expires in 1 hour.", "Password changed successfully, contact support if not you.", "Two-factor authentication 2FA enabled for security."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Weather Forecast",
+        "bullets": ["Sunny today.", "Rain tomorrow."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_034",
+      "category": "surveys",
+      "messages": [
+        {"subject": "We value your feedback - take our survey", "body": "Help us improve by completing this 5-minute survey."},
+        {"subject": "How was your recent purchase?", "body": "Rate your experience and enter to win a $100 gift card."},
+        {"subject": "Customer satisfaction survey", "body": "Your opinion matters! Share your feedback."}
+      ],
+      "good_summary": {
+        "title": "Survey / Feedback / Purchase",
+        "bullets": ["3 survey requests.", "5-minute survey to help improve service.", "Rate recent purchase, win $100 gift card.", "Customer satisfaction survey, share your feedback."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "IMMEDIATE ACTION DEADLINE URGENT",
+        "bullets": ["ACT NOW!", "LAST CHANCE!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_035",
+      "category": "podcasts",
+      "messages": [
+        {"subject": "New episode: The Daily", "body": "Today's episode covers the latest political developments."},
+        {"subject": "Your podcast queue is ready", "body": "5 new episodes have been added to your queue."},
+        {"subject": "Recommended: Tech Talk Podcast", "body": "Based on your listening history, you might enjoy this podcast."}
+      ],
+      "good_summary": {
+        "title": "Episode / Podcast / Queue",
+        "bullets": ["3 podcast notifications.", "New episode of The Daily on political developments.", "Podcast queue ready with 5 new episodes.", "Tech Talk Podcast recommended based on listening history."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Bank Account Frozen",
+        "bullets": ["Contact us immediately!", "Suspicious activity."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_036",
+      "category": "investments",
+      "messages": [
+        {"subject": "Your portfolio is up 5% this month", "body": "Review your investment performance in the app."},
+        {"subject": "Dividend payment: $45.00", "body": "A dividend payment has been credited to your account."},
+        {"subject": "Market update: October summary", "body": "Here's what happened in the markets this month."}
+      ],
+      "good_summary": {
+        "title": "Portfolio / Dividend / Market",
+        "bullets": ["3 investment messages.", "Portfolio up 5% this month, review performance.", "Dividend payment $45 credited to account.", "October market update summary."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Pizza Party",
+        "bullets": ["Free pizza!", "Come hungry!"],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_037",
+      "category": "credit_card",
+      "messages": [
+        {"subject": "Your credit card statement is ready", "body": "Your October statement with balance of $1,234.56 is now available."},
+        {"subject": "Payment reminder: Due Nov 5", "body": "Your minimum payment of $35 is due on Nov 5."},
+        {"subject": "Unusual activity detected on your card", "body": "We noticed unusual activity. Please verify recent transactions."}
+      ],
+      "good_summary": {
+        "title": "Statement / Payment / Card",
+        "bullets": ["3 credit card messages.", "October statement ready, balance $1,234.56.", "Payment reminder: minimum $35 due Nov 5.", "Unusual activity detected, verify recent transactions."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Gardening Tips",
+        "bullets": ["Plant tomatoes.", "Water daily."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_038",
+      "category": "app_updates",
+      "messages": [
+        {"subject": "New features in our latest update", "body": "Check out the new dark mode and improved performance."},
+        {"subject": "Update available: Version 3.0", "body": "A new version is available. Update now for bug fixes."},
+        {"subject": "What's new in October", "body": "Here's a summary of all the features we added this month."}
+      ],
+      "good_summary": {
+        "title": "Update / Features / Version",
+        "bullets": ["3 app update messages.", "New features: dark mode and improved performance.", "Version 3.0 update available with bug fixes.", "October summary of new features added."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "DANGER ZONE",
+        "bullets": ["Proceed with caution!", "High risk area!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_039",
+      "category": "referrals",
+      "messages": [
+        {"subject": "Earn $50: Refer a friend", "body": "Share your referral code and earn $50 for each friend who signs up."},
+        {"subject": "Your friend John signed up!", "body": "Thanks to your referral, you earned $25. Your friend gets $25 too!"},
+        {"subject": "Referral bonus credited", "body": "$50 has been added to your account from referrals."}
+      ],
+      "good_summary": {
+        "title": "Referral / Friend / Bonus",
+        "bullets": ["3 referral program messages.", "Earn $50 for each friend referral who signs up.", "Friend John signed up, you earned $25.", "Referral bonus $50 credited to account."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Volcano Eruption",
+        "bullets": ["Evacuate now!", "Lava approaching!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_040",
+      "category": "warranty",
+      "messages": [
+        {"subject": "Your warranty expires in 30 days", "body": "Extend your protection plan before it's too late."},
+        {"subject": "Warranty claim submitted", "body": "We received your warranty claim and will process it within 5 days."},
+        {"subject": "Extended warranty options", "body": "Protect your purchase with our extended warranty plans."}
+      ],
+      "good_summary": {
+        "title": "Warranty / Claim / Protection",
+        "bullets": ["3 warranty messages.", "Warranty expires in 30 days, extend protection plan.", "Warranty claim submitted, processing within 5 days.", "Extended warranty protection options available."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Music Playlist",
+        "bullets": ["Top hits!", "New releases."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_041",
+      "category": "freelance",
+      "messages": [
+        {"subject": "New project invitation on Upwork", "body": "A client invited you to their project: Website redesign."},
+        {"subject": "Payment received: $500", "body": "Your client released payment for the completed milestone."},
+        {"subject": "Contract started: Logo Design", "body": "Your contract with ABC Corp has started. Good luck!"}
+      ],
+      "good_summary": {
+        "title": "Project / Payment / Contract",
+        "bullets": ["3 freelance messages.", "New Upwork project invitation: Website redesign.", "Payment $500 received for completed milestone.", "Logo Design contract started with ABC Corp."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Bird Watching",
+        "bullets": ["Spotted a robin!", "Beautiful cardinals."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_042",
+      "category": "rewards",
+      "messages": [
+        {"subject": "You earned 500 points!", "body": "Your recent purchase earned you 500 rewards points."},
+        {"subject": "Reward available: Free coffee", "body": "You have enough points to redeem a free coffee. Visit any location."},
+        {"subject": "Points expiring soon", "body": "2,000 points will expire on Nov 30. Use them before they're gone!"}
+      ],
+      "good_summary": {
+        "title": "Points / Reward / Coffee",
+        "bullets": ["3 rewards program messages.", "Earned 500 rewards points from purchase.", "Free coffee reward available to redeem.", "2,000 points expiring Nov 30, use before gone."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Ancient History",
+        "bullets": ["Romans and Greeks.", "Medieval times."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_043",
+      "category": "technical",
+      "messages": [
+        {"subject": "Build failed: Project-ABC", "body": "The latest build failed due to test errors. See details in CI/CD."},
+        {"subject": "Pull request approved", "body": "Your PR #123 has been approved and is ready to merge."},
+        {"subject": "Deployment complete: Production", "body": "Version 2.5.0 has been successfully deployed to production."}
+      ],
+      "good_summary": {
+        "title": "Build / Pull / Deployment",
+        "bullets": ["3 development messages.", "Build failed on Project-ABC due to test errors in CI/CD.", "Pull request PR #123 approved, ready to merge.", "Version 2.5.0 deployment complete to production."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Fluffy Clouds",
+        "bullets": ["Look up!", "So pretty."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_044",
+      "category": "research",
+      "messages": [
+        {"subject": "Paper submission deadline: Nov 15", "body": "Submit your paper to the conference by Nov 15."},
+        {"subject": "Peer review assigned", "body": "You have been assigned to review paper #456."},
+        {"subject": "Your paper has been accepted!", "body": "Congratulations! Your paper will be published in the December issue."}
+      ],
+      "good_summary": {
+        "title": "Paper / Review / Conference",
+        "bullets": ["3 academic messages.", "Paper submission deadline Nov 15 for conference.", "Peer review assigned for paper #456.", "Paper accepted, published in December issue."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Ice Cream Flavors",
+        "bullets": ["Chocolate!", "Vanilla too."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_045",
+      "category": "volunteer",
+      "messages": [
+        {"subject": "Volunteer shift reminder: Saturday 9 AM", "body": "Don't forget your volunteer shift at the food bank this Saturday."},
+        {"subject": "Thank you for volunteering!", "body": "Your 20 hours of service this month made a real difference."},
+        {"subject": "New volunteer opportunity", "body": "We need volunteers for the upcoming charity run on Nov 10."}
+      ],
+      "good_summary": {
+        "title": "Volunteer / Shift / Charity",
+        "bullets": ["3 volunteer messages.", "Volunteer shift Saturday 9 AM at food bank.", "Thank you for 20 hours of service this month.", "New volunteer opportunity: charity run Nov 10."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Underwater Basket Weaving",
+        "bullets": ["Unique hobby!", "Try it today."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_046",
+      "category": "home_improvement",
+      "messages": [
+        {"subject": "Quote ready: Kitchen renovation", "body": "Your quote for the kitchen renovation is attached: $15,000."},
+        {"subject": "Contractor arriving tomorrow 8 AM", "body": "The plumber will arrive tomorrow between 8-10 AM."},
+        {"subject": "Permit approved", "body": "Your building permit has been approved. Construction can begin."}
+      ],
+      "good_summary": {
+        "title": "Kitchen / Contractor / Permit",
+        "bullets": ["3 home improvement messages.", "Kitchen renovation quote $15,000 attached.", "Plumber contractor arriving tomorrow 8-10 AM.", "Building permit approved, construction can begin."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Outer Space",
+        "bullets": ["Mars mission!", "Rocket launch."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_047",
+      "category": "childcare",
+      "messages": [
+        {"subject": "Daycare payment due: $800", "body": "October tuition of $800 is due by Oct 25."},
+        {"subject": "School picture day: Oct 28", "body": "Don't forget to dress up for picture day on Oct 28!"},
+        {"subject": "Parent-teacher conference sign-up", "body": "Sign up for your conference slot for Nov 5-6."}
+      ],
+      "good_summary": {
+        "title": "Daycare / School / Conference",
+        "bullets": ["3 childcare messages.", "Daycare tuition $800 due Oct 25.", "School picture day Oct 28, dress up.", "Parent-teacher conference sign-up for Nov 5-6."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Dinosaurs",
+        "bullets": ["T-Rex!", "Velociraptors."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_048",
+      "category": "fashion",
+      "messages": [
+        {"subject": "New arrivals: Fall collection", "body": "Shop our latest fall styles. New sweaters and boots!"},
+        {"subject": "Your wishlist item is on sale!", "body": "The dress you saved is now 40% off. Shop now!"},
+        {"subject": "Order shipped: 2 items", "body": "Your fashion order has shipped. Arrives Oct 24."}
+      ],
+      "good_summary": {
+        "title": "Fall / Sale / Order",
+        "bullets": ["3 fashion messages.", "New fall collection: sweaters and boots.", "Wishlist dress 40% off sale.", "Fashion order shipped, arrives Oct 24."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "CRITICAL SYSTEM ALERT",
+        "bullets": ["Server down!", "Data loss imminent!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_049",
+      "category": "sports",
+      "messages": [
+        {"subject": "Game day: Lakers vs. Celtics tonight", "body": "Tip-off at 7:30 PM. Get your snacks ready!"},
+        {"subject": "Fantasy football update", "body": "Your team scored 125 points this week. You're in 3rd place."},
+        {"subject": "Tickets available: NFL Week 8", "body": "Get tickets to this Sunday's game before they sell out."}
+      ],
+      "good_summary": {
+        "title": "Game / Fantasy / Tickets",
+        "bullets": ["3 sports messages.", "Lakers vs Celtics tonight, tip-off 7:30 PM.", "Fantasy football team scored 125 points, 3rd place.", "NFL Week 8 tickets available for Sunday game."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Accounting Invoices Due",
+        "bullets": ["Pay now!", "Final notice."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_050",
+      "category": "books",
+      "messages": [
+        {"subject": "Your Kindle book is ready", "body": "The book you pre-ordered is now available for download."},
+        {"subject": "Library book due: Oct 28", "body": "Return 'The Great Gatsby' by Oct 28 to avoid late fees."},
+        {"subject": "Audible credit available", "body": "You have 1 credit to spend. Browse new releases!"}
+      ],
+      "good_summary": {
+        "title": "Kindle / Library / Audible",
+        "bullets": ["3 book messages.", "Kindle pre-ordered book ready for download.", "Library book The Great Gatsby due Oct 28.", "Audible credit available for new releases."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Extreme Weather Warning",
+        "bullets": ["Seek shelter!", "Storm approaching!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_051",
+      "category": "dating",
+      "messages": [
+        {"subject": "You have a new match!", "body": "Sarah liked your profile. Send her a message!"},
+        {"subject": "Someone viewed your profile", "body": "5 people viewed your profile this week."},
+        {"subject": "Daily picks: 10 new matches", "body": "Check out today's recommended matches for you."}
+      ],
+      "good_summary": {
+        "title": "Match / Profile / Dating",
+        "bullets": ["3 dating app messages.", "New match: Sarah liked your profile.", "5 people viewed your profile this week.", "Daily picks: 10 new recommended matches."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Tax Audit Notice",
+        "bullets": ["IRS contact required!", "Immediate response needed."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_052",
+      "category": "music_streaming",
+      "messages": [
+        {"subject": "New release from your favorite artist", "body": "Taylor Swift just released a new album. Listen now!"},
+        {"subject": "Your 2024 Wrapped is here", "body": "See your top songs and artists from this year."},
+        {"subject": "Concert alert: Artist near you", "body": "Coldplay is performing in your city on Dec 1."}
+      ],
+      "good_summary": {
+        "title": "Album / Songs / Concert",
+        "bullets": ["3 music messages.", "Taylor Swift new album released.", "2024 Wrapped: your top songs and artists.", "Coldplay concert in your city Dec 1."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Legal Summons",
+        "bullets": ["Appear in court!", "Mandatory hearing."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_053",
+      "category": "photography",
+      "messages": [
+        {"subject": "Your photos are ready for download", "body": "The photos from your session are now available."},
+        {"subject": "Photo book shipped", "body": "Your custom photo book has shipped. Arrives Oct 26."},
+        {"subject": "Storage alert: iCloud photos 95% full", "body": "Upgrade your storage to keep backing up photos."}
+      ],
+      "good_summary": {
+        "title": "Photos / Book / Storage",
+        "bullets": ["3 photography messages.", "Photos from session ready for download.", "Custom photo book shipped, arrives Oct 26.", "iCloud photos storage 95% full, upgrade needed."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Lottery Winner",
+        "bullets": ["You won millions!", "Claim your prize."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_054",
+      "category": "video_streaming",
+      "messages": [
+        {"subject": "New on Netflix: Wednesday Season 2", "body": "The new season of Wednesday is now streaming."},
+        {"subject": "Continue watching: Breaking Bad", "body": "Pick up where you left off in Season 3."},
+        {"subject": "Your HBO subscription renews tomorrow", "body": "Your $15.99 monthly subscription renews Oct 20."}
+      ],
+      "good_summary": {
+        "title": "Netflix / Streaming / Subscription",
+        "bullets": ["3 streaming messages.", "Wednesday Season 2 now on Netflix.", "Continue watching Breaking Bad Season 3.", "HBO subscription $15.99 renews tomorrow Oct 20."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Medical Emergency",
+        "bullets": ["Call 911!", "Life threatening!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_055",
+      "category": "smart_home",
+      "messages": [
+        {"subject": "Doorbell alert: Motion detected", "body": "Motion was detected at your front door at 2:15 PM."},
+        {"subject": "Thermostat adjusted", "body": "Your Nest thermostat was set to 72 degrees."},
+        {"subject": "Low battery: Front door sensor", "body": "Replace the battery in your front door sensor soon."}
+      ],
+      "good_summary": {
+        "title": "Doorbell / Thermostat / Battery",
+        "bullets": ["3 smart home messages.", "Motion detected at front door 2:15 PM.", "Nest thermostat set to 72 degrees.", "Low battery on front door sensor, replace soon."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Alien Invasion",
+        "bullets": ["They're here!", "Run for cover!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_056",
+      "category": "marketplace",
+      "messages": [
+        {"subject": "New message about your listing", "body": "A buyer is interested in your couch. Reply to their message."},
+        {"subject": "Price drop alert", "body": "An item you're watching dropped from $100 to $75."},
+        {"subject": "Your item sold!", "body": "Congratulations! Your bike sold for $200. Ship within 3 days."}
+      ],
+      "good_summary": {
+        "title": "Listing / Sold / Buyer",
+        "bullets": ["3 marketplace messages.", "Buyer interested in your couch listing.", "Price drop alert: item dropped to $75.", "Bike sold for $200, ship within 3 days."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Horoscope Reading",
+        "bullets": ["Mercury retrograde!", "Lucky numbers."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_057",
+      "category": "professional",
+      "messages": [
+        {"subject": "LinkedIn: 3 people viewed your profile", "body": "See who's looking at your professional profile."},
+        {"subject": "Endorsement received: Project Management", "body": "John endorsed you for Project Management skills."},
+        {"subject": "Connection request: Sarah from TechCo", "body": "Sarah wants to connect with you on LinkedIn."}
+      ],
+      "good_summary": {
+        "title": "LinkedIn / Profile / Endorsement",
+        "bullets": ["3 professional networking messages.", "3 people viewed your LinkedIn profile.", "Endorsement for Project Management from John.", "Connection request from Sarah at TechCo."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Earthquake Alert",
+        "bullets": ["Magnitude 7.5!", "Evacuate immediately!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_058",
+      "category": "weather",
+      "messages": [
+        {"subject": "Severe weather alert: Your area", "body": "A thunderstorm warning is in effect until 8 PM."},
+        {"subject": "Tomorrow's forecast: Rain", "body": "Expect rain throughout the day. High of 55 degrees."},
+        {"subject": "Weekend weather looks great!", "body": "Sunny skies and 70 degrees expected Saturday and Sunday."}
+      ],
+      "good_summary": {
+        "title": "Weather / Thunderstorm / Forecast",
+        "bullets": ["3 weather messages.", "Severe thunderstorm warning until 8 PM.", "Tomorrow forecast: rain, high 55 degrees.", "Weekend sunny, 70 degrees Saturday and Sunday."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Recipe Ideas",
+        "bullets": ["Try pasta!", "Bake cookies."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_059",
+      "category": "coworking",
+      "messages": [
+        {"subject": "Your desk booking confirmed", "body": "Desk #42 is booked for Oct 21 at WeWork Times Square."},
+        {"subject": "New amenity: Phone booths available", "body": "Private phone booths are now available on Floor 3."},
+        {"subject": "Community event: Networking happy hour", "body": "Join us Thursday at 5 PM for drinks and networking."}
+      ],
+      "good_summary": {
+        "title": "Desk / WeWork / Networking",
+        "bullets": ["3 coworking messages.", "Desk #42 booked Oct 21 at WeWork Times Square.", "New phone booths amenity on Floor 3.", "Networking happy hour Thursday 5 PM."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Zombie Apocalypse",
+        "bullets": ["Undead rising!", "Board up windows!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_060",
+      "category": "pharmacy",
+      "messages": [
+        {"subject": "Prescription ready for pickup", "body": "Your prescription is ready at Walgreens on Main St."},
+        {"subject": "Refill reminder: Blood pressure medication", "body": "Your medication refill is due. Order online or call us."},
+        {"subject": "Flu shot available", "body": "Get your flu shot at any of our locations. No appointment needed."}
+      ],
+      "good_summary": {
+        "title": "Prescription / Refill / Flu",
+        "bullets": ["3 pharmacy messages.", "Prescription ready at Walgreens on Main St.", "Blood pressure medication refill reminder.", "Flu shot available, no appointment needed."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Dance Party",
+        "bullets": ["Get your groove on!", "DJ spinning hits."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_061",
+      "category": "ecommerce_returns",
+      "messages": [
+        {"subject": "Return request approved", "body": "Your return has been approved. Print the label and ship within 14 days."},
+        {"subject": "Refund processed: $89.99", "body": "Your refund has been processed and will appear in 3-5 days."},
+        {"subject": "Return shipping label", "body": "Your prepaid return label is attached. Drop off at any UPS location."}
+      ],
+      "good_summary": {
+        "title": "Return / Refund / Label",
+        "bullets": ["3 return messages.", "Return request approved, ship within 14 days.", "Refund $89.99 processed, appears in 3-5 days.", "Prepaid return shipping label for UPS drop off."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Identity Theft Alert",
+        "bullets": ["Someone stole your info!", "Act immediately!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_062",
+      "category": "food_recalls",
+      "messages": [
+        {"subject": "Product recall: Spinach contamination", "body": "Certain spinach products have been recalled due to E. coli risk."},
+        {"subject": "Safety alert: Do not consume", "body": "If you purchased recalled products, dispose of them immediately."},
+        {"subject": "Refund available for recalled items", "body": "Return recalled products for a full refund."}
+      ],
+      "good_summary": {
+        "title": "Recall / Spinach / Safety",
+        "bullets": ["3 food safety messages.", "Spinach product recall due to E. coli contamination.", "Safety alert: dispose recalled products immediately.", "Full refund available for recalled items."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Cute Puppies",
+        "bullets": ["So adorable!", "Pet them all."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_063",
+      "category": "domain_hosting",
+      "messages": [
+        {"subject": "Domain expires in 7 days: example.com", "body": "Renew your domain to avoid losing it to someone else."},
+        {"subject": "SSL certificate expiring", "body": "Your SSL certificate expires in 14 days. Renew now."},
+        {"subject": "Hosting invoice: $120/year", "body": "Your annual hosting fee is due on Nov 1."}
+      ],
+      "good_summary": {
+        "title": "Domain / SSL / Hosting",
+        "bullets": ["3 domain/hosting messages.", "Domain example.com expires in 7 days, renew now.", "SSL certificate expiring in 14 days.", "Hosting invoice $120/year due Nov 1."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Flower Arrangements",
+        "bullets": ["Beautiful roses!", "Lovely tulips."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_064",
+      "category": "crowdfunding",
+      "messages": [
+        {"subject": "Project update: Gadget X", "body": "We're 80% funded! Thank you for your support."},
+        {"subject": "Your reward has shipped", "body": "Your Kickstarter reward is on its way!"},
+        {"subject": "New project you might like", "body": "Based on your interests, check out this new campaign."}
+      ],
+      "good_summary": {
+        "title": "Project / Kickstarter / Reward",
+        "bullets": ["3 crowdfunding messages.", "Gadget X project 80% funded.", "Kickstarter reward has shipped.", "New project campaign recommendation."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Urgent Medical Test Results",
+        "bullets": ["Contact doctor immediately!", "Critical findings."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_065",
+      "category": "parking",
+      "messages": [
+        {"subject": "Parking session started", "body": "Your parking session at Lot A has started. Ends at 5 PM."},
+        {"subject": "Parking expires in 15 minutes", "body": "Extend your parking or move your car to avoid a ticket."},
+        {"subject": "Parking receipt", "body": "Your parking fee of $8.00 has been charged."}
+      ],
+      "good_summary": {
+        "title": "Parking / Session / Expires",
+        "bullets": ["3 parking messages.", "Parking session at Lot A ends 5 PM.", "Parking expires in 15 minutes, extend or move car.", "Parking fee $8 charged."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Medieval Knights",
+        "bullets": ["Jousting tournament!", "Armor shining."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_066",
+      "category": "moving",
+      "messages": [
+        {"subject": "Moving quote: $2,500", "body": "Your quote for moving services on Nov 15 is attached."},
+        {"subject": "Confirm your moving date", "body": "Please confirm your move date by Oct 25."},
+        {"subject": "Packing supplies order shipped", "body": "Your boxes and packing tape have shipped."}
+      ],
+      "good_summary": {
+        "title": "Moving / Quote / Packing",
+        "bullets": ["3 moving messages.", "Moving quote $2,500 for Nov 15.", "Confirm moving date by Oct 25.", "Packing supplies boxes and tape shipped."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Ancient Pyramids",
+        "bullets": ["Egyptian mysteries!", "Pharaoh secrets."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_067",
+      "category": "visa_immigration",
+      "messages": [
+        {"subject": "Visa application received", "body": "Your visa application has been received and is being processed."},
+        {"subject": "Document request: Proof of employment", "body": "Please submit additional documentation within 30 days."},
+        {"subject": "Interview scheduled: Nov 5", "body": "Your visa interview is scheduled for Nov 5 at 9 AM."}
+      ],
+      "good_summary": {
+        "title": "Visa / Interview / Document",
+        "bullets": ["3 immigration messages.", "Visa application received, being processed.", "Document request: proof of employment within 30 days.", "Visa interview scheduled Nov 5 at 9 AM."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Funny Cat Videos",
+        "bullets": ["LOL so cute!", "Watch now."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_068",
+      "category": "certification",
+      "messages": [
+        {"subject": "Exam registration confirmed", "body": "You're registered for the AWS certification exam on Nov 10."},
+        {"subject": "Study materials available", "body": "Access your exam prep materials in the learning portal."},
+        {"subject": "Certification expires in 60 days", "body": "Renew your certification before it expires on Dec 20."}
+      ],
+      "good_summary": {
+        "title": "Exam / Certification / AWS",
+        "bullets": ["3 certification messages.", "AWS exam registration confirmed Nov 10.", "Study materials available in learning portal.", "Certification expires Dec 20, renew within 60 days."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Beach Vacation",
+        "bullets": ["Sand and sun!", "Relaxation mode."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_069",
+      "category": "HOA",
+      "messages": [
+        {"subject": "HOA meeting: Oct 28 at 7 PM", "body": "Join us for the monthly HOA meeting in the clubhouse."},
+        {"subject": "HOA dues reminder: $250", "body": "Your quarterly dues are due by Oct 31."},
+        {"subject": "Violation notice: Lawn maintenance", "body": "Your lawn needs maintenance per community guidelines."}
+      ],
+      "good_summary": {
+        "title": "HOA / Dues / Meeting",
+        "bullets": ["3 HOA messages.", "Monthly HOA meeting Oct 28 at 7 PM in clubhouse.", "Quarterly dues $250 due Oct 31.", "Violation notice: lawn maintenance needed."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Space Exploration",
+        "bullets": ["To infinity!", "And beyond!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_070",
+      "category": "language_learning",
+      "messages": [
+        {"subject": "Daily reminder: Practice Spanish", "body": "Keep your streak alive! Complete today's lesson."},
+        {"subject": "You reached a new level!", "body": "Congratulations on reaching Intermediate level in French!"},
+        {"subject": "New course available: Japanese", "body": "Start learning Japanese with our new beginner course."}
+      ],
+      "good_summary": {
+        "title": "Spanish / French / Japanese",
+        "bullets": ["3 language learning messages.", "Daily Spanish practice reminder, keep streak.", "Reached Intermediate level in French.", "New Japanese beginner course available."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Bank Fraud Alert",
+        "bullets": ["Unauthorized transaction!", "Call bank now!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_071",
+      "category": "cloud_services",
+      "messages": [
+        {"subject": "AWS billing alert: $500 threshold reached", "body": "Your AWS costs have exceeded $500 this month."},
+        {"subject": "Service degradation: US-East-1", "body": "Some services may experience degraded performance."},
+        {"subject": "New feature: Lambda SnapStart", "body": "Reduce cold start times with our new feature."}
+      ],
+      "good_summary": {
+        "title": "AWS / Billing / Service",
+        "bullets": ["3 cloud service messages.", "AWS billing alert: costs exceeded $500.", "Service degradation in US-East-1 region.", "New Lambda SnapStart feature for cold starts."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Butterfly Migration",
+        "bullets": ["Monarchs flying!", "Nature's beauty."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_072",
+      "category": "nonprofit",
+      "messages": [
+        {"subject": "Impact report: Your donation at work", "body": "See how your donation helped provide 100 meals."},
+        {"subject": "Matching gift opportunity", "body": "Your donation will be matched 2:1 until Oct 31!"},
+        {"subject": "Volunteer appreciation event", "body": "Join us Nov 5 to celebrate our amazing volunteers."}
+      ],
+      "good_summary": {
+        "title": "Donation / Matching / Volunteer",
+        "bullets": ["3 nonprofit messages.", "Impact report: donation provided 100 meals.", "Matching gift 2:1 opportunity until Oct 31.", "Volunteer appreciation event Nov 5."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Asteroid Impact Warning",
+        "bullets": ["Earth in danger!", "Global evacuation!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_073",
+      "category": "online_courses",
+      "messages": [
+        {"subject": "New lecture posted: Machine Learning Week 5", "body": "This week's lecture on neural networks is now available."},
+        {"subject": "Assignment due: Oct 25", "body": "Submit your Week 4 assignment before the deadline."},
+        {"subject": "Course completion certificate", "body": "Congratulations! Your certificate is ready for download."}
+      ],
+      "good_summary": {
+        "title": "Lecture / Assignment / Certificate",
+        "bullets": ["3 online course messages.", "Machine Learning Week 5 lecture on neural networks.", "Assignment due Oct 25 deadline.", "Course completion certificate ready for download."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Tropical Fish",
+        "bullets": ["Colorful aquariums!", "Swimming around."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_074",
+      "category": "tax_preparation",
+      "messages": [
+        {"subject": "Your tax documents are ready", "body": "Your W-2 and 1099 forms are available for download."},
+        {"subject": "Tax filing deadline: April 15", "body": "File your taxes on time to avoid penalties."},
+        {"subject": "Estimated tax payment due", "body": "Your Q4 estimated tax payment is due Jan 15."}
+      ],
+      "good_summary": {
+        "title": "Tax / W-2 / Filing",
+        "bullets": ["3 tax messages.", "W-2 and 1099 tax documents ready for download.", "Tax filing deadline April 15 to avoid penalties.", "Q4 estimated tax payment due Jan 15."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Rock Concert",
+        "bullets": ["Turn it up!", "Headbanging time."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_075",
+      "category": "rental_car",
+      "messages": [
+        {"subject": "Reservation confirmed: Compact car", "body": "Your rental is confirmed for Oct 25-28 at $45/day."},
+        {"subject": "Pick up reminder: Tomorrow 10 AM", "body": "Don't forget to pick up your rental car tomorrow."},
+        {"subject": "Receipt for your rental", "body": "Thank you for renting with us. Total: $180.00."}
+      ],
+      "good_summary": {
+        "title": "Rental / Car / Reservation",
+        "bullets": ["3 rental car messages.", "Reservation confirmed Oct 25-28 at $45/day.", "Pickup reminder tomorrow 10 AM.", "Rental receipt total $180."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Magic Tricks",
+        "bullets": ["Abracadabra!", "Watch closely."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_076",
+      "category": "furniture",
+      "messages": [
+        {"subject": "Your furniture is ready for delivery", "body": "Your couch will be delivered Oct 26 between 9-1 PM."},
+        {"subject": "Assembly required: Instructions attached", "body": "Your bookshelf requires assembly. See attached guide."},
+        {"subject": "Design consultation scheduled", "body": "Your design consultation is set for Oct 24 at 2 PM."}
+      ],
+      "good_summary": {
+        "title": "Furniture / Delivery / Assembly",
+        "bullets": ["3 furniture messages.", "Couch delivery Oct 26 between 9-1 PM.", "Bookshelf assembly instructions attached.", "Design consultation Oct 24 at 2 PM."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Time Travel",
+        "bullets": ["Back to the future!", "Past adventures."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_077",
+      "category": "meal_kit",
+      "messages": [
+        {"subject": "Your meal kit ships tomorrow", "body": "This week's meals are being prepared for shipment."},
+        {"subject": "New recipes this week", "body": "Choose from 15 delicious recipes for next week's box."},
+        {"subject": "Delivery scheduled: Wednesday", "body": "Your meal kit will arrive Wednesday by 8 PM."}
+      ],
+      "good_summary": {
+        "title": "Meal / Recipes / Delivery",
+        "bullets": ["3 meal kit messages.", "Meal kit ships tomorrow.", "15 new recipes to choose for next week.", "Delivery scheduled Wednesday by 8 PM."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Nuclear Alert",
+        "bullets": ["Take shelter!", "Countdown started."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_078",
+      "category": "wine_club",
+      "messages": [
+        {"subject": "Your monthly selection is ready", "body": "This month's wines: Cabernet and Chardonnay."},
+        {"subject": "Wine shipment on the way", "body": "Your 6-bottle shipment will arrive Oct 28."},
+        {"subject": "Tasting notes: October wines", "body": "Learn about this month's selections and food pairings."}
+      ],
+      "good_summary": {
+        "title": "Wine / Shipment / Tasting",
+        "bullets": ["3 wine club messages.", "Monthly selection: Cabernet and Chardonnay.", "6-bottle wine shipment arrives Oct 28.", "October tasting notes and food pairings."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Passport Revoked",
+        "bullets": ["Cannot travel!", "Contact authorities."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_079",
+      "category": "meditation",
+      "messages": [
+        {"subject": "Daily meditation reminder", "body": "Take 10 minutes to meditate and find your calm."},
+        {"subject": "New guided meditation: Sleep", "body": "Try our new sleep meditation for better rest."},
+        {"subject": "You've meditated for 30 days!", "body": "Congratulations on your mindfulness streak!"}
+      ],
+      "good_summary": {
+        "title": "Meditation / Sleep / Mindfulness",
+        "bullets": ["3 meditation app messages.", "Daily meditation reminder, 10 minutes.", "New guided sleep meditation for better rest.", "30-day mindfulness meditation streak."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "House on Fire",
+        "bullets": ["Call 911!", "Evacuate now!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_080",
+      "category": "event_tickets",
+      "messages": [
+        {"subject": "Tickets confirmed: Hamilton", "body": "Your tickets for Hamilton on Dec 10 are confirmed."},
+        {"subject": "Parking pass available", "body": "Add parking to your order for $25."},
+        {"subject": "Show reminder: This Saturday", "body": "Don't forget! Your show is this Saturday at 7 PM."}
+      ],
+      "good_summary": {
+        "title": "Tickets / Hamilton / Show",
+        "bullets": ["3 event ticket messages.", "Hamilton tickets confirmed Dec 10.", "Parking pass available for $25.", "Show reminder this Saturday 7 PM."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Plumbing Problems",
+        "bullets": ["Pipes leaking!", "Water everywhere."],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_081",
+      "category": "storage_unit",
+      "messages": [
+        {"subject": "Storage payment due: $89/month", "body": "Your storage unit payment is due on Nov 1."},
+        {"subject": "Facility hours changing", "body": "New hours: 6 AM - 10 PM starting Nov 1."},
+        {"subject": "Climate control maintenance", "body": "Scheduled maintenance Oct 25. Access not affected."}
+      ],
+      "good_summary": {
+        "title": "Storage / Payment / Facility",
+        "bullets": ["3 storage unit messages.", "Storage payment $89 due Nov 1.", "Facility hours changing to 6 AM - 10 PM.", "Climate control maintenance Oct 25."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Carnival Rides",
+        "bullets": ["Cotton candy!", "Roller coasters!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_082",
+      "category": "printing",
+      "messages": [
+        {"subject": "Print order ready for pickup", "body": "Your business cards are ready at FedEx Office."},
+        {"subject": "Photo prints shipped", "body": "Your 50 photo prints have shipped."},
+        {"subject": "Low ink alert: Black cartridge", "body": "Your printer's black ink is running low."}
+      ],
+      "good_summary": {
+        "title": "Print / Cards / Ink",
+        "bullets": ["3 printing messages.", "Business cards ready at FedEx Office.", "50 photo prints shipped.", "Low black ink cartridge alert."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Tornado Warning",
+        "bullets": ["Seek shelter immediately!", "Destructive winds!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_083",
+      "category": "home_security",
+      "messages": [
+        {"subject": "Alarm triggered: Front door", "body": "Your front door alarm was triggered at 3:15 PM."},
+        {"subject": "System armed: Away mode", "body": "Your security system is now armed in Away mode."},
+        {"subject": "Monthly security report", "body": "No incidents detected this month. All systems normal."}
+      ],
+      "good_summary": {
+        "title": "Alarm / Security / System",
+        "bullets": ["3 home security messages.", "Front door alarm triggered 3:15 PM.", "Security system armed in Away mode.", "Monthly report: no incidents, systems normal."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Knitting Patterns",
+        "bullets": ["Cozy scarves!", "Warm mittens."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_084",
+      "category": "ride_share",
+      "messages": [
+        {"subject": "Your Uber ride receipt", "body": "Trip from Home to Airport. Total: $35.00."},
+        {"subject": "Rate your driver", "body": "How was your ride with John? Leave a rating."},
+        {"subject": "Lyft: $10 off your next ride", "body": "Use code SAVE10 on your next Lyft ride."}
+      ],
+      "good_summary": {
+        "title": "Uber / Lyft / Ride",
+        "bullets": ["3 ride share messages.", "Uber receipt: Home to Airport, $35.", "Rate your driver John.", "Lyft $10 off code SAVE10."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Dinosaur Discovery",
+        "bullets": ["New species found!", "Million years old."],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_085",
+      "category": "dentist",
+      "messages": [
+        {"subject": "Appointment reminder: Cleaning tomorrow", "body": "Your dental cleaning is tomorrow at 9 AM."},
+        {"subject": "Treatment plan ready", "body": "Your treatment plan for the crown is attached."},
+        {"subject": "Insurance claim processed", "body": "Your insurance covered $150 of your $200 visit."}
+      ],
+      "good_summary": {
+        "title": "Dental / Cleaning / Insurance",
+        "bullets": ["3 dental messages.", "Cleaning appointment tomorrow 9 AM.", "Crown treatment plan attached.", "Insurance claim processed: $150 of $200 covered."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Surfing Lessons",
+        "bullets": ["Catch waves!", "Beach vibes."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_086",
+      "category": "auction",
+      "messages": [
+        {"subject": "You've been outbid on Item #123", "body": "Someone bid higher. Current bid: $150."},
+        {"subject": "Auction ending soon: 2 hours left", "body": "Don't miss your chance to win the vintage watch."},
+        {"subject": "Congratulations! You won!", "body": "You won the auction for $175. Pay within 48 hours."}
+      ],
+      "good_summary": {
+        "title": "Auction / Bid / Won",
+        "bullets": ["3 auction messages.", "Outbid on Item #123, current bid $150.", "Auction ending in 2 hours for vintage watch.", "Won auction $175, pay within 48 hours."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Snowman Building",
+        "bullets": ["Winter fun!", "Carrot nose."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_087",
+      "category": "appliance_repair",
+      "messages": [
+        {"subject": "Service appointment confirmed", "body": "Technician will arrive Oct 25 between 10-2 PM."},
+        {"subject": "Parts ordered for your repair", "body": "The replacement part has been ordered. ETA: 3 days."},
+        {"subject": "Repair complete - invoice attached", "body": "Your refrigerator repair is complete. Total: $250."}
+      ],
+      "good_summary": {
+        "title": "Service / Repair / Technician",
+        "bullets": ["3 appliance repair messages.", "Technician appointment Oct 25 between 10-2 PM.", "Replacement parts ordered, ETA 3 days.", "Refrigerator repair complete, invoice $250."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Camping Adventure",
+        "bullets": ["Roast marshmallows!", "Sleep in tent."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_088",
+      "category": "eyecare",
+      "messages": [
+        {"subject": "Your new glasses are ready", "body": "Pick up your glasses at Vision Center anytime."},
+        {"subject": "Eye exam reminder: 6 months overdue", "body": "Schedule your annual eye exam today."},
+        {"subject": "Contact lens subscription renewing", "body": "Your next shipment of contacts ships Nov 1."}
+      ],
+      "good_summary": {
+        "title": "Glasses / Eye / Contacts",
+        "bullets": ["3 eye care messages.", "New glasses ready at Vision Center.", "Eye exam 6 months overdue, schedule today.", "Contact lens subscription ships Nov 1."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Volcano Erupting",
+        "bullets": ["Lava flow!", "Run away!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_089",
+      "category": "plant_care",
+      "messages": [
+        {"subject": "Time to water your plants!", "body": "Your monstera needs watering based on soil moisture."},
+        {"subject": "New plant added to your garden", "body": "You added Snake Plant to your collection."},
+        {"subject": "Plant care tips: Fall season", "body": "Adjust watering as days get shorter."}
+      ],
+      "good_summary": {
+        "title": "Plant / Water / Garden",
+        "bullets": ["3 plant care messages.", "Monstera needs watering based on soil moisture.", "Snake Plant added to garden collection.", "Fall plant care tips: adjust watering."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Final Exam Today",
+        "bullets": ["Study hard!", "Good luck!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_090",
+      "category": "laundry",
+      "messages": [
+        {"subject": "Your laundry is ready", "body": "Pick up your dry cleaning at Main St Cleaners."},
+        {"subject": "Wash cycle complete", "body": "Your laundry machine has finished the wash cycle."},
+        {"subject": "Laundry pickup scheduled", "body": "We'll pick up your laundry tomorrow at 9 AM."}
+      ],
+      "good_summary": {
+        "title": "Laundry / Dry / Pickup",
+        "bullets": ["3 laundry messages.", "Dry cleaning ready at Main St Cleaners.", "Wash cycle complete on laundry machine.", "Laundry pickup scheduled tomorrow 9 AM."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Meteor Strike Imminent",
+        "bullets": ["Impact in 24 hours!", "World ending!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_091",
+      "category": "art",
+      "messages": [
+        {"subject": "New exhibition: Modern Masters", "body": "Visit our new exhibition opening this weekend."},
+        {"subject": "Your artwork has shipped", "body": "The framed print you ordered is on its way."},
+        {"subject": "Art class registration open", "body": "Sign up for our fall watercolor class."}
+      ],
+      "good_summary": {
+        "title": "Exhibition / Artwork / Class",
+        "bullets": ["3 art messages.", "Modern Masters exhibition opening this weekend.", "Framed print artwork shipped.", "Fall watercolor art class registration open."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Emergency Surgery Required",
+        "bullets": ["Immediate operation!", "Life or death!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_092",
+      "category": "bike_share",
+      "messages": [
+        {"subject": "Ride completed: 2.5 miles", "body": "Great ride! You burned 150 calories."},
+        {"subject": "Annual membership expiring", "body": "Renew your Citi Bike membership by Oct 31."},
+        {"subject": "New station near you", "body": "A new bike station opened at 5th and Main."}
+      ],
+      "good_summary": {
+        "title": "Ride / Bike / Membership",
+        "bullets": ["3 bike share messages.", "Ride completed 2.5 miles, 150 calories burned.", "Citi Bike membership expiring Oct 31.", "New bike station at 5th and Main."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Alien Abduction",
+        "bullets": ["They took me!", "Probe time!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_093",
+      "category": "pest_control",
+      "messages": [
+        {"subject": "Quarterly treatment scheduled", "body": "Your pest control visit is Oct 28 between 9-12."},
+        {"subject": "Treatment complete", "body": "Today's treatment is complete. Avoid treated areas for 2 hours."},
+        {"subject": "Annual contract renewal", "body": "Renew your pest control contract for $299/year."}
+      ],
+      "good_summary": {
+        "title": "Pest / Treatment / Contract",
+        "bullets": ["3 pest control messages.", "Quarterly treatment Oct 28 between 9-12.", "Treatment complete, avoid areas for 2 hours.", "Annual contract renewal $299/year."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Birthday Party",
+        "bullets": ["Cake time!", "Blow candles!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_094",
+      "category": "public_transit",
+      "messages": [
+        {"subject": "Service alert: Line 2 delays", "body": "Expect 15-minute delays on Line 2 due to maintenance."},
+        {"subject": "Monthly pass activated", "body": "Your November transit pass is now active."},
+        {"subject": "New route starting Nov 1", "body": "Route 45 will now serve downtown on weekends."}
+      ],
+      "good_summary": {
+        "title": "Transit / Line / Route",
+        "bullets": ["3 transit messages.", "Line 2 service delays 15 minutes due to maintenance.", "November monthly transit pass activated.", "Route 45 new downtown weekend service Nov 1."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Chocolate Factory Tour",
+        "bullets": ["Willy Wonka!", "Golden ticket!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_095",
+      "category": "newspaper",
+      "messages": [
+        {"subject": "Your daily briefing", "body": "Today's top stories from around the world."},
+        {"subject": "Breaking: Election results", "body": "Live updates on the election results."},
+        {"subject": "Weekend edition available", "body": "Read this week's in-depth features and analysis."}
+      ],
+      "good_summary": {
+        "title": "Daily / Breaking / Weekend",
+        "bullets": ["3 news messages.", "Daily briefing with top stories.", "Breaking news: live election results.", "Weekend edition with in-depth features."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Heart Attack Symptoms",
+        "bullets": ["Chest pain!", "Call ambulance!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_096",
+      "category": "tutoring",
+      "messages": [
+        {"subject": "Session confirmed: Math tutoring", "body": "Your tutoring session is Oct 24 at 4 PM via Zoom."},
+        {"subject": "Homework help available", "body": "Need help with tonight's assignment? Book a session."},
+        {"subject": "Progress report: October", "body": "Your child improved 15% in math this month!"}
+      ],
+      "good_summary": {
+        "title": "Tutoring / Math / Session",
+        "bullets": ["3 tutoring messages.", "Math tutoring session Oct 24 at 4 PM via Zoom.", "Homework help available, book a session.", "Progress report: 15% math improvement."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Ice Skating Fun",
+        "bullets": ["Triple axel!", "Skating rink."],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_097",
+      "category": "cleaning_service",
+      "messages": [
+        {"subject": "Cleaning scheduled: Tomorrow 10 AM", "body": "Our team will arrive tomorrow at 10 AM."},
+        {"subject": "Rate your cleaning", "body": "How was your recent cleaning? Leave feedback."},
+        {"subject": "Holiday schedule changes", "body": "We're closed Nov 28. Reschedule if needed."}
+      ],
+      "good_summary": {
+        "title": "Cleaning / Scheduled / Team",
+        "bullets": ["3 cleaning service messages.", "Cleaning scheduled tomorrow 10 AM.", "Rate your recent cleaning, leave feedback.", "Holiday schedule: closed Nov 28."],
+        "urgency": "medium"
+      },
+      "bad_summary": {
+        "title": "Treasure Map Found",
+        "bullets": ["X marks spot!", "Pirate gold!"],
+        "urgency": "low"
+      }
+    },
+    {
+      "id": "cluster_098",
+      "category": "mailbox",
+      "messages": [
+        {"subject": "Mail arriving today: 3 pieces", "body": "You have 3 mail pieces arriving today."},
+        {"subject": "Package scanned at post office", "body": "Your package is at the local post office for delivery."},
+        {"subject": "Hold mail request confirmed", "body": "Your mail will be held Oct 28 - Nov 5."}
+      ],
+      "good_summary": {
+        "title": "Mail / Package / Post",
+        "bullets": ["3 mail messages.", "3 mail pieces arriving today.", "Package scanned at local post office for delivery.", "Hold mail confirmed Oct 28 - Nov 5."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "Circus Coming to Town",
+        "bullets": ["Clowns!", "Acrobats!"],
+        "urgency": "medium"
+      }
+    },
+    {
+      "id": "cluster_099",
+      "category": "nutrition",
+      "messages": [
+        {"subject": "Daily nutrition summary", "body": "You consumed 2,100 calories and hit your protein goal."},
+        {"subject": "Meal logged: Lunch", "body": "Your lunch was logged: 650 calories."},
+        {"subject": "Water reminder", "body": "You're behind on water intake today. Drink up!"}
+      ],
+      "good_summary": {
+        "title": "Nutrition / Calories / Water",
+        "bullets": ["3 nutrition messages.", "Daily summary: 2,100 calories, protein goal hit.", "Lunch logged at 650 calories.", "Water intake reminder, drink more today."],
+        "urgency": "low"
+      },
+      "bad_summary": {
+        "title": "CRITICAL SECURITY BREACH",
+        "bullets": ["Hackers attacking!", "Data stolen!"],
+        "urgency": "high"
+      }
+    },
+    {
+      "id": "cluster_100",
+      "category": "mixed_urgent",
+      "messages": [
+        {"subject": "URGENT: Verify your account now", "body": "We detected suspicious activity. Verify your identity immediately."},
+        {"subject": "Action required: Deadline tomorrow", "body": "Submit your application by tomorrow to be considered."},
+        {"subject": "Final notice: Payment overdue", "body": "Your payment is 60 days overdue. Immediate action required."}
+      ],
+      "good_summary": {
+        "title": "Verify / Deadline / Payment",
+        "bullets": ["3 urgent action messages.", "Verify account due to suspicious activity.", "Application deadline tomorrow, action required.", "Final notice: payment 60 days overdue."],
+        "urgency": "high"
+      },
+      "bad_summary": {
+        "title": "Relaxation Tips",
+        "bullets": ["Take it easy.", "No rush.", "Chill out."],
+        "urgency": "low"
+      }
+    }
+  ]
+}
