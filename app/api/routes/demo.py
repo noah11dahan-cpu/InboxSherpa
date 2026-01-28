@@ -6,8 +6,8 @@ POST /demo creates a demo user and imports sample_inbox.json
 
 from __future__ import annotations
 
+import json
 import uuid
-from datetime import date
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -77,13 +77,15 @@ async def start_demo(session: AsyncSession = Depends(get_session)) -> DemoRespon
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
-    # Get today's date for the digest
-    today = date.today().isoformat()
+    # Get the most recent date from the sample data for the digest
+    sample_data = json.loads(SAMPLE_DATA_PATH.read_text(encoding="utf-8"))
+    timestamps = [msg.get("timestamp", "")[:10] for msg in sample_data if msg.get("timestamp")]
+    digest_date = max(timestamps) if timestamps else "2026-01-12"
 
     return DemoResponse(
         user_id=str(DEMO_USER_ID),
         email=DEMO_EMAIL,
         messages_imported=result.inserted,
-        digest_date=today,
-        next_step=f"Visit /digest?user_id={DEMO_USER_ID} to see your demo digest",
+        digest_date=digest_date,
+        next_step=f"Visit /digest?user_id={DEMO_USER_ID}&digest_date={digest_date} to see your demo digest",
     )
