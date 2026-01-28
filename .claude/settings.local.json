@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose:*)",
+      "Bash(..venvScriptspython.exe -m pytest -q)",
+      "Bash(python -m pytest:*)",
+      "Bash(C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe -m pytest:*)",
+      "Bash(set DATABASE_URL=postgresql+asyncpg://inboxsherpa:inboxsherpa@localhost:5432/inboxsherpa)",
+      "Bash(DATABASE_URL=postgresql+asyncpg://inboxsherpa:inboxsherpa@localhost:5432/inboxsherpa C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe -m pytest:*)",
+      "Bash(C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/pip.exe install:*)",
+      "Bash(DATABASE_URL=postgresql+asyncpg://inboxsherpa:inboxsherpa@localhost:5432/inboxsherpa PIPELINE_USER_ID=96cd6791-db08-5d07-a3ce-94264bfb68a4 C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe:*)",
+      "Bash(C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe:*)",
+      "Bash(DATABASE_URL=postgresql+asyncpg://inboxsherpa:inboxsherpa@localhost:5432/inboxsherpa PIPELINE_USER_ID=6ad33875-61d8-5ca0-b078-62f530229290 C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe:*)",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(DATABASE_URL=postgresql+asyncpg://inboxsherpa:inboxsherpa@localhost:5432/inboxsherpa C:/Users/noahd/Documents/InboxSherpa/.venv/Scripts/python.exe -m ruff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
+    ]
+  }
+}
