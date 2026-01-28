@@ -60,8 +60,8 @@ function DigestPageContent() {
         digest_date: dateToUse,
       });
       setData(out);
-    } catch (e: any) {
-      setErr(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
       setData(null);
     } finally {
       setLoading(false);
@@ -84,8 +84,8 @@ function DigestPageContent() {
         decision: params.decision,
       });
       await run(digestDate);
-    } catch (e: any) {
-      setErr(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -199,8 +199,8 @@ function DigestPageContent() {
                     <div className="text-sm font-medium">Suggested actions</div>
                     <ul className="mt-2 space-y-2">
                       {c.summary.suggested_actions.map((a, i) => {
-                        const status = (a as any).status ?? "proposed";
-                        const actionId = (a as any).id as string | undefined;
+                        const status = a.status ?? "proposed";
+                        const actionId = a.id;
                         const isDecided = status !== "proposed";
 
                         return (

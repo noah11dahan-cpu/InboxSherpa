@@ -69,8 +69,8 @@ export default function MetricsPage() {
         // If you haven't wired the endpoint yet, silently ignore
         setLatestRun(null);
       }
-    } catch (e: any) {
-      setErr(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
       setData(null);
       setLatestRun(null);
     } finally {

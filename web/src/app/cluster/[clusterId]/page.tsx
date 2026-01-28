@@ -47,8 +47,8 @@ export default function ClusterPage() {
         digest_date,
       });
       setData(out);
-    } catch (e: any) {
-      setErr(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
       setData(null);
     } finally {
       setLoading(false);
@@ -76,8 +76,8 @@ export default function ClusterPage() {
         decision: params.decision,
       });
       await load(); // refresh cluster detail after applying
-    } catch (e: any) {
-      setErr(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
     } finally {
       setActionBusy(false);
     }
@@ -128,8 +128,8 @@ export default function ClusterPage() {
                 <div className="text-sm font-medium">Suggested actions</div>
                 <ul className="mt-2 space-y-2">
                   {data.summary.suggested_actions.map((a, i) => {
-                    const status = (a as any).status ?? "proposed";
-                    const actionId = (a as any).id as string | undefined;
+                    const status = a.status ?? "proposed";
+                    const actionId = a.id;
                     const isDecided = status !== "proposed";
 
                     return (
